@@ -1,6 +1,7 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:dice_pt2/pages/settings_page.dart';
 import 'package:dice_pt2/pages/starting_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';

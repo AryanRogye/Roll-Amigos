@@ -1,21 +1,15 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers, avoid_print, unused_local_variable, dead_code, use_build_context_synchronously
-
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:dice_pt2/models/join_room_entry.dart';
 import 'package:dice_pt2/models/my_game_start.dart';
 import 'package:dice_pt2/models/start_room_entry.dart';
 import 'package:dice_pt2/pages/main_page.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
+// ignore: must_be_immutable
 class StartingPage extends StatefulWidget {
   SharedPreferences prefs;
   StartingPage({super.key, required this.prefs});
