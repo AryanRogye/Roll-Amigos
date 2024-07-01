@@ -1,0 +1,43 @@
+name: dice_pt2
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.1 <4.0.0'
+
+dependencies:
+  audioplayers: ^6.0.0
+  cloud_firestore: ^5.0.1
+  device_info_plus: ^10.1.0
+  firebase_auth: ^5.1.0
+  firebase_core: ^3.1.0
+  flutter:
+    sdk: flutter
+  
+  flutter_cube: ^0.1.1
+  google_mobile_ads: ^5.1.0
+  google_nav_bar: ^5.0.6
+  provider: ^6.1.2
+  shared_preferences: ^2.2.3
+  smooth_page_indicator: ^1.1.0
+  tutorial_coach_mark: ^1.2.11
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/dice-6-white.png"
+  
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/audio/rolling.mp3
+    - assets/gif/
