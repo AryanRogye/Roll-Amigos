@@ -1,3 +1,5 @@
+import 'package:dice_pt2/components/firebase/firebase_functions.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -54,20 +56,39 @@ class _SettingsPagecState extends State<SettingsPage> {
     );
   }
 
+  Future<dynamic> getFirstNameAndLastName() async {
+    return await FirebaseFunctions.getFirstNameLastName();
+  }
+
   drawDisplayName() {
-    return Container(
-      alignment: Alignment.center,
-      width: double.infinity,
-      height: 80,
-      color: const Color.fromARGB(255, 255, 255, 255),
-      child: const Text(
-        "First Name Last Name",
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-      ),
+    return FutureBuilder(
+      future: getFirstNameAndLastName(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          print("DONE");
+          print("Data: ${snapshot.data}");
+          //snapshot.data is a list
+          var firstName = snapshot.data[0];
+          var lastName = snapshot.data[1];
+
+          return Container(
+            alignment: Alignment.center,
+            width: double.infinity,
+            height: 80,
+            color: const Color.fromARGB(255, 255, 255, 255),
+            child: Text(
+              "$firstName $lastName",
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
     );
   }
 
