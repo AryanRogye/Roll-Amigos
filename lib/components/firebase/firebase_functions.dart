@@ -170,4 +170,15 @@ class FirebaseFunctions {
     }
     return roomName;
   }
+
+  //_______________________________________________________________
+  //FORGOT PASSWORD SEND EMAIL
+  //_______________________________________________________________
+  static Future<dynamic> forgotPassword(String email) async {
+    try {
+      final _db = FirebaseAuth.instance;
+    } except (e) {
+      return "error: $e";
+    }
+  }
 }
