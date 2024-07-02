@@ -173,6 +173,26 @@ class FirebaseFunctions {
     return roomName;
   }
 
+
+  //_______________________________________________________________
+  //GET First Name Last Name
+  //_______________________________________________________________
+  static Future<dynamic> getFirstNameLastName() async {
+    final _db = FirebaseFirestore.instance;
+    String email = FirebaseAuth.instance.currentUser!.email!;
+    DocumentSnapshot userDoc = await _db.collection("users").doc(email).get();
+    var firstName = await userDoc.get("firstName");
+    var lastName = await userDoc.get("lastName");
+    return [firstName, lastName];
+  }
+
+  //_______________________________________________________________
+  //GET Email
+  //_______________________________________________________________
+  static Future<dynamic> getEmail() async {
+    return FirebaseAuth.instance.currentUser!.email;
+  }
+
   //_______________________________________________________________
   //FORGOT PASSWORD SEND EMAIL
   //_______________________________________________________________
