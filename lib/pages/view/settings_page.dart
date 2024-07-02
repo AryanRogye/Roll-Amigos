@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:dice_pt2/pages/auth/forgot_pw.dart';
 import 'package:flutter/material.dart';
