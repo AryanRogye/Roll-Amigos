@@ -1,5 +1,4 @@
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
@@ -103,14 +102,12 @@ class _SettingsPagecState extends State<SettingsPage> {
       future: FirebaseFunctions.getEmail(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          print("DONE");
-          print("Data: ${snapshot.data}");
           var email = snapshot.data;
           return Container(
             alignment: Alignment.center,
             width: double.infinity,
             height: 80,
-            color: Color.fromARGB(0, 255, 255, 255),
+            color: const Color.fromARGB(0, 255, 255, 255),
             child: Text(
               "$email",
               style: const TextStyle(
@@ -121,7 +118,7 @@ class _SettingsPagecState extends State<SettingsPage> {
             ),
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );

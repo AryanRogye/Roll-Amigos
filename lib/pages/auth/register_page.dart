@@ -1,12 +1,10 @@
 // ignore_for_file: no_logic_in_create_state, use_build_context_synchronously
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:dice_pt2/models/my_button.dart';
 import 'package:dice_pt2/models/my_name_entry.dart';
 import 'package:dice_pt2/models/my_textfield.dart';
 import 'package:dice_pt2/pages/auth/home_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
