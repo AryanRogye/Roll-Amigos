@@ -1,6 +1,7 @@
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -43,15 +44,20 @@ class _SettingsPagecState extends State<SettingsPage> {
     return Container(
       alignment: Alignment.center,
       width: double.infinity,
-      height: 80,
-      color: const Color.fromARGB(255, 255, 255, 255),
-      child: const Text(
-        "Profile Picture",
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
+      height: 130,
+      color: const Color.fromARGB(0, 255, 255, 255),
+      child: FutureBuilder(
+        future: FirebaseFunctions.getFirstNameLastName(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            var firstName = snapshot.data[0];
+            var lastName = snapshot.data[1];
+            return ProfilePicture(
+                name: "$firstName $lastName", radius: 50, fontsize: 40);
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
       ),
     );
   }
@@ -75,13 +81,13 @@ class _SettingsPagecState extends State<SettingsPage> {
             alignment: Alignment.center,
             width: double.infinity,
             height: 80,
-            color: const Color.fromARGB(255, 255, 255, 255),
+            color: const Color.fromARGB(0, 255, 255, 255),
             child: Text(
               "$firstName $lastName",
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           );
@@ -104,13 +110,13 @@ class _SettingsPagecState extends State<SettingsPage> {
             alignment: Alignment.center,
             width: double.infinity,
             height: 80,
-            color: const Color.fromARGB(255, 255, 255, 255),
+            color: Color.fromARGB(0, 255, 255, 255),
             child: Text(
               "$email",
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
           );
