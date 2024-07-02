@@ -25,7 +25,7 @@ class _ScreenNavigationState extends State<ScreenNavigation> {
     super.initState();
     _screens = [
       StartingPage(prefs: widget.prefs),
-      SettingsPage(),
+      SettingsPage(prefs: widget.prefs),
     ];
   }
 

@@ -2,9 +2,11 @@ import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:dice_pt2/pages/auth/forgot_pw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  SharedPreferences prefs;
+  SettingsPage({super.key, required this.prefs});
 
   @override
   State<SettingsPage> createState() => _SettingsPagecState();
@@ -18,6 +20,7 @@ class SettingsPage extends StatefulWidget {
 // need the option to sign out
 
 class _SettingsPagecState extends State<SettingsPage> {
+  bool signOutConfirm = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +37,8 @@ class _SettingsPagecState extends State<SettingsPage> {
           Container(color: Colors.black, height: 1),
           drawChangePassword(),
           Container(color: Colors.black, height: 1),
-          // drawSignOut(),
+          drawSignOut(),
+          Container(color: Colors.black, height: 1),
         ],
       ),
     );
@@ -146,6 +150,57 @@ class _SettingsPagecState extends State<SettingsPage> {
                 fontWeight: FontWeight.bold,
                 color: Colors.white)),
       ),
+    );
+  }
+
+  drawSignOut() {
+    return GestureDetector(
+      onTap: () {
+        showExitDialog();
+      },
+      child: Container(
+        width: double.infinity,
+        height: 80,
+        alignment: Alignment.center,
+        //need to show a exit icon
+        child: const Icon(Icons.exit_to_app, color: Colors.white, size: 40),
+      ),
+    );
+  }
+
+  Future<dynamic> showExitDialog() async {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Sign Out",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              )),
+          content: const Text("Are you sure you want to sign out?",
+              style: TextStyle(
+                color: Colors.black,
+              )),
+          actions: [
+            TextButton(
+              onPressed: () {
+                print("No");
+                Navigator.pop(context);
+              },
+              child: const Text("No"),
+            ),
+            TextButton(
+              onPressed: () {
+                print("Yes");
+                Navigator.pop(context);
+                FirebaseFunctions.signOut(prefs: widget.prefs);
+              },
+              child: const Text("Yes"),
+            ),
+          ],
+        );
+      },
     );
   }
 }
