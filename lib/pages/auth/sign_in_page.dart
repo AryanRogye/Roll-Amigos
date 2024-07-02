@@ -1,11 +1,9 @@
 // ignore_for_file: no_logic_in_create_state, library_private_types_in_public_api
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:dice_pt2/models/my_button.dart';
 import 'package:dice_pt2/models/my_textfield.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:dice_pt2/pages/auth/forgot_pw.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -98,6 +96,9 @@ class _SignInPageState extends State<SignInPage> {
                         const SizedBox(height: 10),
                         //Register Button
                         registerButton(),
+
+                        const SizedBox(height: 10),
+                        forgotPasswordButton(),
                       ],
                     ),
                   )),
@@ -225,5 +226,42 @@ class _SignInPageState extends State<SignInPage> {
         },
       );
     }
+  }
+
+  forgotPasswordButton() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 25),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "Dont Remember Your Password?",
+            style: TextStyle(
+              color: Color.fromARGB(255, 185, 185, 185),
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              print("Forgot Password");
+              //go back to the forgotpw page
+              //but give the option to go back as well
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ForgotPw(),
+                ),
+              );
+            },
+            child: const Text(
+              "Click Here",
+              style: TextStyle(
+                color: Colors.blue,
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
