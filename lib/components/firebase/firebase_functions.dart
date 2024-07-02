@@ -182,4 +182,11 @@ class FirebaseFunctions {
     var lastName = await userDoc.get("lastName");
     return [firstName, lastName];
   }
+
+  //_______________________________________________________________
+  //GET Email
+  //_______________________________________________________________
+  static Future<dynamic> getEmail() async {
+    return FirebaseAuth.instance.currentUser!.email;
+  }
 }

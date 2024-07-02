@@ -93,19 +93,31 @@ class _SettingsPagecState extends State<SettingsPage> {
   }
 
   drawDisplayEmail() {
-    return Container(
-      alignment: Alignment.center,
-      width: double.infinity,
-      height: 80,
-      color: const Color.fromARGB(255, 255, 255, 255),
-      child: const Text(
-        "email address",
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-        ),
-      ),
+    return FutureBuilder(
+      future: FirebaseFunctions.getEmail(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          print("DONE");
+          print("Data: ${snapshot.data}");
+          var email = snapshot.data;
+          return Container(
+            alignment: Alignment.center,
+            width: double.infinity,
+            height: 80,
+            color: const Color.fromARGB(255, 255, 255, 255),
+            child: Text(
+              "$email",
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+          );
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
     );
   }
 }
