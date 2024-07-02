@@ -4,7 +4,7 @@ import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:dice_pt2/models/join_room_entry.dart';
 import 'package:dice_pt2/models/my_game_start.dart';
 import 'package:dice_pt2/models/start_room_entry.dart';
-import 'package:dice_pt2/pages/main_page.dart';
+import 'package:dice_pt2/pages/view/dice_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -295,7 +295,7 @@ class _StartingPageState extends State<StartingPage> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => MainPage(
+              builder: (context) => DicePage(
                 prefs: widget.prefs,
                 roomName: _RoomNameController.text.trim(),
                 pinNumber: pinNumber,
@@ -352,7 +352,7 @@ class _StartingPageState extends State<StartingPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => MainPage(
+          builder: (context) => DicePage(
             prefs: widget.prefs,
             roomName: roomName,
             pinNumber: roomPassword,

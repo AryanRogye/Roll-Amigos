@@ -10,23 +10,23 @@ import 'package:dice_pt2/ads/ad_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 //Main Page of the app
-class MainPage extends StatefulWidget {
+class DicePage extends StatefulWidget {
   final SharedPreferences prefs;
   String roomName = "";
   String pinNumber = "";
 
-  MainPage(
+  DicePage(
       {super.key,
       required this.prefs,
       required this.roomName,
       required this.pinNumber});
 
   @override
-  MainPageScreen createState() => MainPageScreen(prefs: prefs);
+  DicePageScreen createState() => DicePageScreen(prefs: prefs);
 }
 
 //implementing the main page
-class MainPageScreen extends State<MainPage> {
+class DicePageScreen extends State<DicePage> {
   //this is so that the preferences can be used in the main page
   final SharedPreferences prefs; //shared preferences
   final user = FirebaseAuth.instance.currentUser;
@@ -35,7 +35,7 @@ class MainPageScreen extends State<MainPage> {
   String toRoll = "Tap Screen To Roll Dice";
 
   //constructor
-  MainPageScreen({required this.prefs});
+  DicePageScreen({required this.prefs});
 
   //banner ad
   BannerAd? _banner;
