@@ -1,4 +1,5 @@
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
+import 'package:dice_pt2/pages/auth/forgot_pw.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 
@@ -31,8 +32,8 @@ class _SettingsPagecState extends State<SettingsPage> {
           Container(color: Colors.black, height: 1),
           drawDisplayEmail(),
           Container(color: Colors.black, height: 1),
-          // drawChangePassword(),
-          // Container(color: Colors.black, height: 1),
+          drawChangePassword(),
+          Container(color: Colors.black, height: 1),
           // drawSignOut(),
         ],
       ),
@@ -121,6 +122,30 @@ class _SettingsPagecState extends State<SettingsPage> {
           return const CircularProgressIndicator();
         }
       },
+    );
+  }
+
+  drawChangePassword() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ForgotPw(),
+          ),
+        );
+      },
+      child: Container(
+        alignment: Alignment.center,
+        width: double.infinity,
+        height: 80,
+        color: const Color.fromARGB(0, 255, 255, 255),
+        child: const Text("change password",
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white)),
+      ),
     );
   }
 }
