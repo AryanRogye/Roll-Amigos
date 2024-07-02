@@ -1,3 +1,4 @@
+import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:flutter/material.dart';
 
 class ForgotPw extends StatefulWidget {
@@ -71,16 +72,39 @@ class _ForgotPwState extends State<ForgotPw> {
           ),
         ),
         const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {},
-          child: const Text("Send Email"),
+        Container(
+          width: 200,
+          child: MaterialButton(
+            color: Colors.grey[50],
+            onPressed: () {
+              sendForgotPwEmail();
+            },
+            child: const Text("Send Email"),
+          ),
         )
       ],
     );
   }
 
-  void sendForgotPwEmail() {
-    
+  void sendForgotPwEmail() async {
+    var email = _emailController.text.trim();
+    var msg =
+        await FirebaseFunctions.forgotPassword(email: email, context: context);
+    if (msg == "Good To Go") {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(
+              "Email sent to $email",
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+              ),
+            ),
+          );
+        },
+      );
+    }
   }
-
 }

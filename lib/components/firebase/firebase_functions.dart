@@ -3,6 +3,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dice_pt2/components/utils/generate_password.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirebaseFunctions {
@@ -174,11 +176,36 @@ class FirebaseFunctions {
   //_______________________________________________________________
   //FORGOT PASSWORD SEND EMAIL
   //_______________________________________________________________
-  static Future<dynamic> forgotPassword(String email) async {
+  static Future<dynamic> forgotPassword(
+      {required String email, required BuildContext context}) async {
     try {
-      final _db = FirebaseAuth.instance;
-    } except (e) {
-      return "error: $e";
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      print("Got Email -- $email");
+      return "Good To Go";
+    } on FirebaseAuthException catch (e) {
+      print("Error: ${e.message}");
+      String errorMessage;
+      switch (e.code) {
+        case 'invalid-email':
+          errorMessage = 'The email address is not valid.';
+          break;
+        case 'user-not-found':
+          errorMessage = 'No user found with this email.';
+          break;
+        default:
+          errorMessage = 'An unknown error occurred.';
+      }
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text(
+              errorMessage,
+              style: const TextStyle(color: Colors.black),
+            ),
+          );
+        },
+      );
     }
   }
 }
