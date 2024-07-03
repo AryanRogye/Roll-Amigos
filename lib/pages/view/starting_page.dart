@@ -12,8 +12,14 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 // ignore: must_be_immutable
 class StartingPage extends StatefulWidget {
+  String firstName;
+  String lastName;
   SharedPreferences prefs;
-  StartingPage({super.key, required this.prefs});
+  StartingPage(
+      {super.key,
+      required this.prefs,
+      required this.firstName,
+      required this.lastName});
 
   @override
   State<StartingPage> createState() => _StartingPageState();
@@ -47,17 +53,10 @@ class _StartingPageState extends State<StartingPage> {
         actions: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: FutureBuilder(
-                future: FirebaseFunctions.getFirstNameLastName(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    var firstName = snapshot.data[0];
-                    var lastName = snapshot.data[1];
-                    return ProfilePicture(
-                        name: "$firstName $lastName", radius: 20, fontsize: 20);
-                  }
-                  return const CircularProgressIndicator();
-                }),
+            child: ProfilePicture(
+                name: "${widget.firstName} ${widget.lastName}",
+                radius: 20,
+                fontsize: 10),
           ),
         ],
       ),

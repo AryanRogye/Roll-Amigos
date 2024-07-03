@@ -152,10 +152,21 @@ class FirebaseFunctions {
     print("Add User To Firebase Cloud");
     final _db = FirebaseFirestore.instance;
 
-    Map<String, dynamic> data = {
-      "users":
-          FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.email]),
+    //need to get the name of the user as well
+    var firstAndLast = await getFirstNameLastName();
+    var firstName = await firstAndLast[0];
+    var lastName = await firstAndLast[1];
+
+    Map<String, dynamic> userData = {
+      "email": FirebaseAuth.instance.currentUser!.email,
+      "firstName": firstName,
+      "lastName": lastName,
     };
+
+    Map<String, dynamic> data = {
+      "users": FieldValue.arrayUnion([userData]),
+    };
+
     var roomName = "";
     QuerySnapshot querySnapshot = await _db.collection("rooms").get();
     var foundPassword = false;
@@ -172,7 +183,6 @@ class FirebaseFunctions {
     }
     return roomName;
   }
-
 
   //_______________________________________________________________
   //GET First Name Last Name
@@ -227,5 +237,29 @@ class FirebaseFunctions {
         },
       );
     }
+  }
+
+  //_______________________________________________________________
+  //Get All Users In Room
+  //_______________________________________________________________
+  static Future<dynamic> getAllUsersInRoom(String roomName) async {
+    final _db = FirebaseFirestore.instance;
+    DocumentSnapshot roomDoc =
+        await _db.collection("rooms").doc(roomName).get();
+    var users = await roomDoc.get("users");
+    for (var user in users) {
+    }
+    return users;
+  }
+
+  //_______________________________________________________________
+  //GET NUM OF USERS
+  //_______________________________________________________________
+  static Future<dynamic> getNumOfUsers({required String roomName}) async {
+    final _db = FirebaseFirestore.instance;
+    DocumentSnapshot roomDoc =
+        await _db.collection("rooms").doc(roomName).get();
+    var users = await roomDoc.get("users");
+    return users.length;
   }
 }

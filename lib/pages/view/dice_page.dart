@@ -1,7 +1,10 @@
 // ignore_for_file: no_logic_in_create_state, must_be_immutable, use_build_context_synchronously
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dice_pt2/components/firebase/firebase_functions.dart';
+import 'package:dice_pt2/models/user_display_game.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:dice_pt2/widgets/dice.dart';
 import 'dart:math';
@@ -193,62 +196,58 @@ class DicePageScreen extends State<DicePage> {
   Future showPopUpScreen(BuildContext context, bool isWhite) async {
     String pinNumber = await getPinNumber();
 
+    //TODO
+    //NEED TO IMPLEMENT A WAY FOR THE USER TO SEE THE PEOPLE IN THE ROOM
     return showModalBottomSheet(
       backgroundColor:
           isWhite ? const Color.fromARGB(255, 48, 48, 48) : Colors.white,
       context: context,
       builder: (BuildContext context) {
-        return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.6,
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 40),
-              SizedBox(child: Text("Pin: $pinNumber")),
-              const Row(
-                children: [
-                  SizedBox(
-                    width: 50,
-                  ),
-                  SizedBox(
-                    height: 40,
-                    child: Text(
-                      'Number Of Dices',
-                      style: TextStyle(fontSize: 20),
+        return SingleChildScrollView(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.6,
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 40),
+                SizedBox(child: Text("Pin: $pinNumber")),
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      child: Text(
+                        'Number Of Dices',
+                        style: TextStyle(fontSize: 20),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 30,
-                  ),
-                  SizedBox(height: 30, child: Text('Max = 3')),
-                ],
-              ),
-              DropdownMenu(
-                width: 200,
-                dropdownMenuEntries: const [
-                  DropdownMenuEntry(value: 1, label: '1'),
-                  DropdownMenuEntry(value: 2, label: '2'),
-                  DropdownMenuEntry(value: 3, label: '3'),
-                ],
-                onSelected: (value) {
-                  setState(() {
-                    numOfDices = value!;
-                    prefs.setInt('numOfDices', numOfDices);
-                    updateDiceValues();
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-              Text("Signed In As: ${user!.email!}"),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Sign Out'),
-              ),
-            ],
+                    SizedBox(
+                      width: 30,
+                    ),
+                  ],
+                ),
+                DropdownMenu(
+                  width: 200,
+                  dropdownMenuEntries: const [
+                    DropdownMenuEntry(value: 1, label: '1'),
+                    DropdownMenuEntry(value: 2, label: '2'),
+                    DropdownMenuEntry(value: 3, label: '3'),
+                  ],
+                  onSelected: (value) {
+                    setState(() {
+                      numOfDices = value!;
+                      prefs.setInt('numOfDices', numOfDices);
+                      updateDiceValues();
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+                Text("Signed In As: ${user!.email!}"),
+                const SizedBox(height: 20),
+                //need to show the users in the room here
+                getUsersInRoom(),
+              ],
+            ),
           ),
         );
       },
@@ -310,5 +309,39 @@ class DicePageScreen extends State<DicePage> {
     }).catchError((error) {
       print("Failed to update dice numbers in Firestore: $error");
     });
+  }
+
+  getUsersInRoom() {
+    return FutureBuilder(
+      future: FirebaseFunctions.getAllUsersInRoom(widget.roomName),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasData && snapshot.data != null) {
+            List<dynamic> users = snapshot.data;
+            List<Widget> userWidgets = [];
+            for (var user in users) {
+              var firstName = user['firstName'];
+              var lastName = user['lastName'];
+              userWidgets.add(
+                  UserDisplayGame(firstName: firstName, lastName: lastName));
+            }
+            return userWidgets.isNotEmpty
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: userWidgets,
+                    ),
+                  )
+                : const Text("No Users In Room");
+          } else {
+            return const Text("No Users In Room");
+          }
+        } else {
+          print("NOT DONE");
+          return CircularProgressIndicator();
+        }
+      },
+    );
   }
 }

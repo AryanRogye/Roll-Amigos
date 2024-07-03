@@ -8,7 +8,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPage extends StatefulWidget {
   SharedPreferences prefs;
-  SettingsPage({super.key, required this.prefs});
+  String firstName;
+  String lastName;
+  SettingsPage({
+    super.key,
+    required this.prefs,
+    required this.firstName,
+    required this.lastName,
+  });
 
   @override
   State<SettingsPage> createState() => _SettingsPagecState();
@@ -52,19 +59,11 @@ class _SettingsPagecState extends State<SettingsPage> {
       width: double.infinity,
       height: 130,
       color: const Color.fromARGB(0, 255, 255, 255),
-      child: FutureBuilder(
-        future: FirebaseFunctions.getFirstNameLastName(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            var firstName = snapshot.data[0];
-            var lastName = snapshot.data[1];
-            return ProfilePicture(
-                name: "$firstName $lastName", radius: 50, fontsize: 40);
-          } else {
-            return const CircularProgressIndicator();
-          }
-        },
-      ),
+      child: ProfilePicture(
+        name: "${widget.firstName} ${widget.lastName}",
+        radius: 50,
+        fontsize: 40,
+      ), 
     );
   }
 
@@ -73,36 +72,21 @@ class _SettingsPagecState extends State<SettingsPage> {
   }
 
   drawDisplayName() {
-    return FutureBuilder(
-      future: getFirstNameAndLastName(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          print("DONE");
-          print("Data: ${snapshot.data}");
-          //snapshot.data is a list
-          var firstName = snapshot.data[0];
-          var lastName = snapshot.data[1];
-
-          return Container(
-            alignment: Alignment.center,
-            width: double.infinity,
-            height: 80,
-            color: const Color.fromARGB(0, 255, 255, 255),
-            child: Text(
-              "$firstName $lastName",
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          );
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
+    return Container(
+      alignment: Alignment.center,
+      width: double.infinity,
+      height: 80,
+      color: const Color.fromARGB(0, 255, 255, 255),
+      child: Text(
+        "${widget.firstName} ${widget.lastName}",
+        style: const TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      ),
     );
-  }
+  }   
 
   drawDisplayEmail() {
     return FutureBuilder(
