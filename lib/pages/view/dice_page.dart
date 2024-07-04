@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:dice_pt2/models/user_display_game.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:dice_pt2/widgets/dice.dart';
 import 'dart:math';
