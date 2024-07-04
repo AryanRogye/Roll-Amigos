@@ -247,8 +247,7 @@ class FirebaseFunctions {
     DocumentSnapshot roomDoc =
         await _db.collection("rooms").doc(roomName).get();
     var users = await roomDoc.get("users");
-    for (var user in users) {
-    }
+    for (var user in users) {}
     return users;
   }
 

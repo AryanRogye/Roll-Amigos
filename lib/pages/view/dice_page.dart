@@ -56,6 +56,10 @@ class DicePageScreen extends State<DicePage> {
     listenToDiceChanges();
   }
 
+  Future<int> getNumberOfUsers() async {
+    return await FirebaseFunctions.getNumOfUsers(roomName: widget.roomName);
+  }
+
   Future<String> getPinNumber() async {
     String pinNumber = "";
     final _db = FirebaseFirestore.instance;
@@ -158,6 +162,19 @@ class DicePageScreen extends State<DicePage> {
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            FutureBuilder(
+                future: getNumberOfUsers(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error.toString()}");
+                  } else if (snapshot.hasData) {
+                    return Text("Users: ${snapshot.data}");
+                  } else {
+                    return const Text("No Data");
+                  }
+                }),
             Center(
               child: brightness == Brightness.dark
                   ? DiceWidget(
