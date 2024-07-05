@@ -243,22 +243,53 @@ class FirebaseFunctions {
   //Get All Users In Room
   //_______________________________________________________________
   static Future<dynamic> getAllUsersInRoom(String roomName) async {
-    final _db = FirebaseFirestore.instance;
-    DocumentSnapshot roomDoc =
-        await _db.collection("rooms").doc(roomName).get();
-    var users = await roomDoc.get("users");
-    for (var user in users) {}
-    return users;
-  }
+  final _db = FirebaseFirestore.instance;
+  DocumentSnapshot roomDoc = await _db.collection("rooms").doc(roomName).get();
+
+
+  
+  var users = await roomDoc.get("users");
+
+  // Get host details and format them similarly to users
+  var hostDetails = await getHostName(roomName: roomName);
+  var hostMap = {
+    'firstName': hostDetails[0],
+    'lastName': hostDetails[1],
+    'isHost': true  // Adding an extra field to distinguish host
+  };
+
+  // Convert users to a List<Map> if it's not already
+  List<Map<String, dynamic>> userList = List<Map<String, dynamic>>.from(users);
+  userList.add(hostMap);
+
+  return userList;
+}
 
   //_______________________________________________________________
   //GET NUM OF USERS
   //_______________________________________________________________
   static Future<dynamic> getNumOfUsers({required String roomName}) async {
+    try {
+      final _db = FirebaseFirestore.instance;
+      DocumentSnapshot roomDoc =
+          await _db.collection("rooms").doc(roomName).get();
+      var users = await roomDoc.get("users");
+      return users.length + 1;
+    } catch (e) {
+      return 1;
+    }
+  }
+
+  static Future<dynamic> getHostName({required String roomName}) async {
     final _db = FirebaseFirestore.instance;
     DocumentSnapshot roomDoc =
         await _db.collection("rooms").doc(roomName).get();
-    var users = await roomDoc.get("users");
-    return users.length;
+    var hostEmail = await roomDoc.get("host_details");
+    //now that we have the host email we can get the first and last name from the users collection
+    DocumentSnapshot userDoc =
+        await _db.collection("users").doc(hostEmail).get();
+    var firstName = await userDoc.get("firstName");
+    var lastName = await userDoc.get("lastName");
+    return [firstName, lastName];
   }
 }

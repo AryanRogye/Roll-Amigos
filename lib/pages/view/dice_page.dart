@@ -327,20 +327,30 @@ class DicePageScreen extends State<DicePage> {
     });
   }
 
+  getHostName() async {
+    return await FirebaseFunctions.getHostName(roomName: widget.roomName);
+  }
+
   getUsersInRoom() {
     return FutureBuilder(
       future: FirebaseFunctions.getAllUsersInRoom(widget.roomName),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          if (snapshot.hasData && snapshot.data != null) {
+          if (snapshot.hasData) {
             List<dynamic> users = snapshot.data;
+
             List<Widget> userWidgets = [];
             for (var user in users) {
               var firstName = user['firstName'];
               var lastName = user['lastName'];
               userWidgets.add(
-                  UserDisplayGame(firstName: firstName, lastName: lastName));
+                UserDisplayGame(
+                  firstName: firstName,
+                  lastName: lastName,
+                ),
+              );
             }
+
             return userWidgets.isNotEmpty
                 ? Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -349,12 +359,11 @@ class DicePageScreen extends State<DicePage> {
                       children: userWidgets,
                     ),
                   )
-                : const Text("No Users In Room");
+                : const Text("No Users In Room here");
           } else {
-            return const Text("No Users In Room");
+            return const Text("No Users In Room here ");
           }
         } else {
-          print("NOT DONE");
           return CircularProgressIndicator();
         }
       },
