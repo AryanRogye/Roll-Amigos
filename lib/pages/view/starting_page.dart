@@ -12,14 +12,11 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 // ignore: must_be_immutable
 class StartingPage extends StatefulWidget {
-  String firstName;
-  String lastName;
   SharedPreferences prefs;
-  StartingPage(
-      {super.key,
-      required this.prefs,
-      required this.firstName,
-      required this.lastName});
+  StartingPage({
+    super.key,
+    required this.prefs,
+  });
 
   @override
   State<StartingPage> createState() => _StartingPageState();
@@ -45,6 +42,20 @@ class _StartingPageState extends State<StartingPage> {
   final TextEditingController _RoomNameController = TextEditingController();
   final TextEditingController _RoomPasswordController = TextEditingController();
 
+  drawProfilePicture() {
+    return FutureBuilder(
+      future: FirebaseFunctions.getFirstNameLastName(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          var names = snapshot.data;
+          return ProfilePicture(
+              name: "${names[0]} ${names[1]}", radius: 50, fontsize: 20);
+        }
+        return const CircularProgressIndicator();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,12 +63,11 @@ class _StartingPageState extends State<StartingPage> {
         title: const Text('Starting Page'),
         actions: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ProfilePicture(
-                name: "${widget.firstName} ${widget.lastName}",
-                radius: 20,
-                fontsize: 10),
-          ),
+              padding: const EdgeInsets.all(8.0),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 0),
+                child: drawProfilePicture(),
+              )),
         ],
       ),
       body: SingleChildScrollView(

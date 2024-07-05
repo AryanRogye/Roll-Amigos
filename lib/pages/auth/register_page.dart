@@ -118,6 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
       textfieldController: _emailController,
       hintText: "Email",
       obscureText: false,
+      isPassword: false,
     );
   }
 
@@ -126,6 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
       textfieldController: _passwordController,
       hintText: "Password",
       obscureText: true,
+      isPassword: true,
     );
   }
 

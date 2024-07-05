@@ -139,6 +139,7 @@ class _SignInPageState extends State<SignInPage> {
       textfieldController: _emailController,
       hintText: "Email",
       obscureText: false,
+      isPassword: false,
     );
   }
 
@@ -147,6 +148,7 @@ class _SignInPageState extends State<SignInPage> {
       textfieldController: _passwordController,
       hintText: "Password",
       obscureText: true,
+      isPassword: true,
     );
   }
 

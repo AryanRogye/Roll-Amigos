@@ -32,7 +32,7 @@ class _UserDisplayGameState extends State<UserDisplayGame> {
             ),
             const Spacer(),
             ProfilePicture(
-                random: true,
+                random: false,
                 name: "${widget.firstName} ${widget.lastName}",
                 radius: 20,
                 fontsize: 10),

@@ -6,18 +6,21 @@ class MyTextfield extends StatefulWidget {
   late TextEditingController textfieldController = TextEditingController();
   String? hintText;
   bool obscureText;
+  bool isPassword;
 
   MyTextfield({
     super.key,
     required this.textfieldController,
     required this.hintText,
     required this.obscureText,
+    required this.isPassword,
   });
   @override
   State<MyTextfield> createState() => _MyTextfieldState();
 }
 
 class _MyTextfieldState extends State<MyTextfield> {
+  var icon = Icon(Icons.visibility_off);
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -36,6 +39,21 @@ class _MyTextfieldState extends State<MyTextfield> {
             autocorrect: false,
             obscureText: widget.obscureText,
             decoration: InputDecoration(
+              suffixIcon: widget.isPassword
+                  ? IconButton(
+                      icon: icon,
+                      onPressed: () {
+                        setState(() {
+                          widget.obscureText = !widget.obscureText;
+                          if (widget.obscureText) {
+                            icon = const Icon(Icons.visibility_off);
+                          } else {
+                            icon = const Icon(Icons.visibility);
+                          } 
+                        });
+                      },
+                    )
+                  : null,
               border: InputBorder.none,
               hintText: widget.hintText,
             ),

@@ -105,6 +105,16 @@ class FirebaseFunctions {
     //now we have the password
     print("Password: $password");
 
+    var user = await getFirstNameLastName();
+    var firstName = await user[0];
+    var lastName = await user[1];
+
+    Map<String, dynamic> userData = {
+      "email": email,
+      "firstName": firstName,
+      "lastName": lastName,
+    };
+
     //now we need to add the email, roomName and password to the firebase cloud
     //first we need to create a map of the data
     Map<String, dynamic> data = {
@@ -112,6 +122,7 @@ class FirebaseFunctions {
       "roomPassword": password.toString().trim(),
       "diceNumber": [1, 1, 1],
       "rolling": false,
+      "users": [userData],
     };
     _db.collection("rooms").doc(roomName).set(data);
     return "Room created";
@@ -243,27 +254,18 @@ class FirebaseFunctions {
   //Get All Users In Room
   //_______________________________________________________________
   static Future<dynamic> getAllUsersInRoom(String roomName) async {
-  final _db = FirebaseFirestore.instance;
-  DocumentSnapshot roomDoc = await _db.collection("rooms").doc(roomName).get();
+    final _db = FirebaseFirestore.instance;
+    DocumentSnapshot roomDoc =
+        await _db.collection("rooms").doc(roomName).get();
 
+    var users = await roomDoc.get("users");
 
-  
-  var users = await roomDoc.get("users");
+    // Convert users to a List<Map> if it's not already
+    List<Map<String, dynamic>> userList =
+        List<Map<String, dynamic>>.from(users);
 
-  // Get host details and format them similarly to users
-  var hostDetails = await getHostName(roomName: roomName);
-  var hostMap = {
-    'firstName': hostDetails[0],
-    'lastName': hostDetails[1],
-    'isHost': true  // Adding an extra field to distinguish host
-  };
-
-  // Convert users to a List<Map> if it's not already
-  List<Map<String, dynamic>> userList = List<Map<String, dynamic>>.from(users);
-  userList.add(hostMap);
-
-  return userList;
-}
+    return userList;
+  }
 
   //_______________________________________________________________
   //GET NUM OF USERS
@@ -274,12 +276,15 @@ class FirebaseFunctions {
       DocumentSnapshot roomDoc =
           await _db.collection("rooms").doc(roomName).get();
       var users = await roomDoc.get("users");
-      return users.length + 1;
+      return users.length;
     } catch (e) {
-      return 1;
+      return 0;
     }
   }
 
+  //_______________________________________________________________
+  //GET HOST FIRST AND LAST NAME
+  //_______________________________________________________________
   static Future<dynamic> getHostName({required String roomName}) async {
     final _db = FirebaseFirestore.instance;
     DocumentSnapshot roomDoc =

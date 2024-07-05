@@ -17,55 +17,25 @@ class ScreenNavigation extends StatefulWidget {
 
 class _ScreenNavigationState extends State<ScreenNavigation> {
   int _selectedIndex = 0;
-  late List<Widget> _screens;
-  bool _isLoading = true;
+  late List<Widget> _screens = [];
 
   @override
   void initState() {
     super.initState();
     _screens = [
-      const Center(child: CircularProgressIndicator()),
-      const Center(child: CircularProgressIndicator())
-    ]; // Initialize with loading indicators
-    initializeScreen();
-  }
-
-  Future<void> initializeScreen() async {
-    try {
-      var user = await FirebaseFunctions.getFirstNameLastName();
-      var firstName = user[0];
-      var lastName = user[1];
-      if (mounted) {
-        setState(() {
-          _screens = [
-            StartingPage(
-                prefs: widget.prefs, firstName: firstName, lastName: lastName),
-            SettingsPage(
-                prefs: widget.prefs, firstName: firstName, lastName: lastName),
-          ];
-          _isLoading = false;
-        });
-      }
-    } catch (error) {
-      // Handle errors here if necessary
-      print('Error initializing screen: $error');
-      // Show an error message if needed
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
+      StartingPage(
+        prefs: widget.prefs,
+      ),
+      SettingsPage(
+        prefs: widget.prefs,
+      ),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _isLoading
-          ? Center(
-              child:
-                  CircularProgressIndicator()) // Show loading indicator if still loading
-          : _screens[_selectedIndex],
+      body: _screens[_selectedIndex],
       bottomNavigationBar: gNavBar(),
     );
   }

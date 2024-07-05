@@ -343,6 +343,9 @@ class DicePageScreen extends State<DicePage> {
             for (var user in users) {
               var firstName = user['firstName'];
               var lastName = user['lastName'];
+
+              print("firebase user: $firstName $lastName");
+
               userWidgets.add(
                 UserDisplayGame(
                   firstName: firstName,
