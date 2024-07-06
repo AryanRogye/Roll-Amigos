@@ -60,7 +60,11 @@ class _StartingPageState extends State<StartingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Starting Page'),
+        title: const Text('Dice With Friends',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 17,
+            )),
         actions: [
           Padding(
               padding: const EdgeInsets.all(8.0),
