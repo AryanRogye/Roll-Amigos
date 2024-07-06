@@ -159,38 +159,52 @@ class DicePageScreen extends State<DicePage> {
           ],
         ),
         body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FutureBuilder(
-                future: getNumberOfUsers(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
-                  } else if (snapshot.hasError) {
-                    return Text("Error: ${snapshot.error.toString()}");
-                  } else if (snapshot.hasData) {
-                    return Text("Users: ${snapshot.data}");
-                  } else {
-                    return const Text("No Data");
-                  }
-                }),
-            Center(
-              child: brightness == Brightness.dark
-                  ? DiceWidget(
-                      diceNumber: diceNumber,
-                      isWhite: true,
-                      screenWidth: screenWidth,
-                      screenHeight: screenHeight,
-                      numOfDices: numOfDices,
-                    )
-                  : DiceWidget(
-                      diceNumber: diceNumber,
-                      isWhite: false,
-                      screenWidth: screenWidth,
-                      screenHeight: screenHeight,
-                      numOfDices: numOfDices,
-                    ),
+            SizedBox(height: 30),
+            Container(
+              alignment: Alignment.center,
+              child: FutureBuilder(
+                  future: getNumberOfUsers(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const CircularProgressIndicator();
+                    } else if (snapshot.hasError) {
+                      return Text(
+                        "Error: ${snapshot.error.toString()}",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    } else if (snapshot.hasData) {
+                      return Text(
+                        "Users: ${snapshot.data}",
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    } else {
+                      return const Text("No Data");
+                    }
+                  }),
             ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+            brightness == Brightness.dark
+                ? DiceWidget(
+                    diceNumber: diceNumber,
+                    isWhite: true,
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
+                    numOfDices: numOfDices,
+                  )
+                : DiceWidget(
+                    diceNumber: diceNumber,
+                    isWhite: false,
+                    screenWidth: screenWidth,
+                    screenHeight: screenHeight,
+                    numOfDices: numOfDices,
+                  ),
             const SizedBox(height: 40),
             Text(
               toRoll,
