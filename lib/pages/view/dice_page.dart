@@ -34,7 +34,8 @@ class DicePageScreen extends State<DicePage> {
   final user = FirebaseAuth.instance.currentUser;
   final _db = FirebaseFirestore.instance;
 
-  String toRoll = "Tap Screen To Roll Dice";
+  String toRoll = "";
+  // String toRoll = "Tap Screen To Roll Dice";
 
   //constructor
   DicePageScreen({required this.prefs});
@@ -88,27 +89,27 @@ class DicePageScreen extends State<DicePage> {
 
   void startRollingAnimation() async {
     setState(() {
-      toRoll = 'Rolling Dice....';
+      // toRoll = 'Rolling Dice....';
     });
     getRand(diceNumber, 1, 6);
     await Future.delayed(const Duration(milliseconds: 100));
     setState(() {
-      toRoll = 'Rolling Dice...';
+      // toRoll = 'Rolling Dice...';
     });
     getRand(diceNumber, 1, 6);
     await Future.delayed(const Duration(milliseconds: 100));
     setState(() {
-      toRoll = 'Rolling Dice..';
+      // toRoll = 'Rolling Dice..';
     });
     getRand(diceNumber, 1, 6);
     await Future.delayed(const Duration(milliseconds: 100));
     setState(() {
-      toRoll = 'Rolling Dice.';
+      // toRoll = 'Rolling Dice.';
     });
     getRand(diceNumber, 1, 6);
     await Future.delayed(const Duration(milliseconds: 100));
     setState(() {
-      toRoll = 'Tap Screen To Roll Dice';
+      // toRoll = 'Tap Screen To Roll Dice';
     });
 
     // Fetch the final dice values from Firestore
