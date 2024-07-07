@@ -123,9 +123,33 @@ class FirebaseFunctions {
       "diceNumber": [1, 1, 1],
       "rolling": false,
       "users": [userData],
+      "Number of Dices": 1,
     };
     _db.collection("rooms").doc(roomName).set(data);
     return "Room created";
+  }
+
+  //_______________________________________________________________
+  //GETTING THE NUMBER OF DICES
+  //_______________________________________________________________
+  static Future<dynamic> getNumOfDice({required String roomName}) async {
+    final _db = FirebaseFirestore.instance;
+    DocumentSnapshot roomDoc =
+        await _db.collection("rooms").doc(roomName).get();
+    var numOfDice = await roomDoc.get("Number of Dices");
+    return numOfDice;
+  }
+
+  //_______________________________________________________________
+  //CHANGE THE NUMBER OF DICES
+  //_______________________________________________________________
+  static Future<dynamic> changeNumOfDice(
+      {required String roomName, required int numOfDice}) async {
+    final _db = FirebaseFirestore.instance;
+    Map<String, dynamic> data = {
+      "Number of Dices": numOfDice,
+    };
+    await _db.collection("rooms").doc(roomName).update(data);
   }
 
   //_______________________________________________________________
@@ -159,40 +183,61 @@ class FirebaseFunctions {
   //ADDING THE USER TO THE ROOM
   //_______________________________________________________________
   static Future<dynamic> addUserToFirebaseCloud(String roomPassword) async {
-    //TODO
-    print("Add User To Firebase Cloud");
     final _db = FirebaseFirestore.instance;
+    try {
+      // Get the name of the user
+      var firstAndLast = await getFirstNameLastName();
+      var firstName = firstAndLast[0];
+      var lastName = firstAndLast[1];
 
-    //need to get the name of the user as well
-    var firstAndLast = await getFirstNameLastName();
-    var firstName = await firstAndLast[0];
-    var lastName = await firstAndLast[1];
+      Map<String, dynamic> userData = {
+        "email": FirebaseAuth.instance.currentUser!.email,
+        "firstName": firstName,
+        "lastName": lastName,
+      };
 
-    Map<String, dynamic> userData = {
-      "email": FirebaseAuth.instance.currentUser!.email,
-      "firstName": firstName,
-      "lastName": lastName,
-    };
+      var roomName = "";
+      print("REACHED HERE");
+      QuerySnapshot querySnapshot = await _db.collection("rooms").get();
+      print("DIDNT REACH HERE");
+      var foundPassword = false;
 
-    Map<String, dynamic> data = {
-      "users": FieldValue.arrayUnion([userData]),
-    };
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        var storedPassword = doc.get("roomPassword");
+        if (storedPassword == roomPassword) {
+          foundPassword = true;
+          roomName = doc.id;
 
-    var roomName = "";
-    QuerySnapshot querySnapshot = await _db.collection("rooms").get();
-    var foundPassword = false;
-    for (QueryDocumentSnapshot doc in querySnapshot.docs) {
-      var storedPassword = await doc.get("roomPassword");
+          // Check if user already exists in the room
+          var roomDoc = await _db.collection("rooms").doc(doc.id).get();
+          var users = roomDoc.get("users") as List<dynamic>;
+          bool userExists =
+              users.any((user) => user["email"] == userData["email"]);
 
-      if (storedPassword == roomPassword) {
-        foundPassword = true;
-        await _db.collection("rooms").doc(doc.id).update(data);
-        roomName = doc.id;
-        print("Room Name: $roomName");
-        break;
+          if (!userExists) {
+            print("The User does not exist in the room: $roomName");
+
+            await _db.collection("rooms").doc(doc.id).update({
+              "users": FieldValue.arrayUnion([userData])
+            });
+            print("User added to room: $roomName");
+          } else {
+            print("User already exists in the room: $roomName");
+          }
+
+          break;
+        }
       }
+
+      if (!foundPassword) {
+        throw Exception("Room with the provided password not found.");
+      }
+
+      return roomName;
+    } catch (e) {
+      print("Error adding user to room: $e");
+      return "error: $e";
     }
-    return roomName;
   }
 
   //_______________________________________________________________
@@ -348,5 +393,17 @@ class FirebaseFunctions {
     DocumentSnapshot roomDoc =
         await _db.collection("rooms").doc(roomName).get();
     return roomDoc.exists;
+  }
+
+  //_______________________________________________________________
+  //CHECK IF USER IS THE HOST
+  //_______________________________________________________________
+  static Future<bool> isHost({required roomName}) async {
+    final _db = FirebaseFirestore.instance;
+    String email = FirebaseAuth.instance.currentUser!.email!;
+    DocumentSnapshot roomDoc =
+        await _db.collection("rooms").doc(roomName).get();
+    var hostEmail = await roomDoc.get("host_details");
+    return hostEmail == email;
   }
 }

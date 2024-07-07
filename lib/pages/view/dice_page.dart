@@ -38,6 +38,7 @@ class DicePageScreen extends State<DicePage> {
   final SharedPreferences prefs; //shared preferences
   final user = FirebaseAuth.instance.currentUser;
   final _db = FirebaseFirestore.instance;
+  late bool isHost;
 
   String toRoll = "";
   // String toRoll = "Tap Screen To Roll Dice";
@@ -56,12 +57,61 @@ class DicePageScreen extends State<DicePage> {
   void initState() {
     super.initState();
     numOfDices = prefs.getInt('numOfDices') ?? 1;
+    isUserHost();
+    checkNumOfDices();
     updateDiceValues();
     _createBannerAd();
     listenToDiceChanges();
     listenToRoomExistence();
+    listenToDiceNumChanges();
   }
 
+  Future<bool> isUserHost() async {
+    if (await FirebaseFunctions.isHost(roomName: widget.roomName)) {
+      setState(() {
+        isHost = true;
+      });
+      return true;
+    } else {
+      setState(() {
+        isHost = false;
+      });
+      return false;
+    }
+  }
+
+  //_______________________________________________________________
+  //FUNCTION TO LISTEN TO THE NUMBER OF DICE CHANGES
+  //_______________________________________________________________
+  void listenToDiceNumChanges() {
+    _db
+        .collection('rooms')
+        .doc(widget.roomName)
+        .snapshots()
+        .listen((documentSnapshot) {
+      if (documentSnapshot.exists) {
+        setState(() {
+          numOfDices = documentSnapshot.data()!['Number of Dices'];
+          updateDiceValues();
+        });
+      }
+    });
+  }
+
+  //_______________________________________________________________
+  //FUNCTION TO CHECK THE NUMBER OF DICES
+  //_______________________________________________________________
+  checkNumOfDices() async {
+    var diceNum =
+        await FirebaseFunctions.getNumOfDice(roomName: widget.roomName);
+    setState(() {
+      numOfDices = diceNum;
+    });
+  }
+
+  //_______________________________________________________________
+  //FUNCTION TO LISTEN TO THE ROOMS EXISTENCE
+  //_______________________________________________________________
   void listenToRoomExistence() {
     _db
         .collection('rooms')
@@ -80,6 +130,9 @@ class DicePageScreen extends State<DicePage> {
     });
   }
 
+  //_______________________________________________________________
+  //FUNCTION TO GET THE PIN NUMBER
+  //_______________________________________________________________
   Future<String> getPinNumber() async {
     String pinNumber = "";
     final _db = FirebaseFirestore.instance;
@@ -90,6 +143,9 @@ class DicePageScreen extends State<DicePage> {
     return pinNumber;
   }
 
+  //_______________________________________________________________
+  //FUNCTION TO LISTEN TO THE DICE CHANGES
+  //_______________________________________________________________
   void listenToDiceChanges() {
     _db
         .collection('rooms')
@@ -107,6 +163,9 @@ class DicePageScreen extends State<DicePage> {
     });
   }
 
+  //_______________________________________________________________
+  //FUNCTION TO SHOW THE ROLLING ANIMATION
+  //_______________________________________________________________
   void startRollingAnimation() async {
     setState(() {
       getRand(diceNumber, 1, 6);
@@ -139,7 +198,9 @@ class DicePageScreen extends State<DicePage> {
     }
   }
 
-  //creating the banner ad
+  //_______________________________________________________________
+  //FUNCTION TO CREATE THE BANNER AD
+  //_______________________________________________________________
   void _createBannerAd() {
     _banner = BannerAd(
       size: AdSize.fullBanner,
@@ -149,57 +210,68 @@ class DicePageScreen extends State<DicePage> {
     )..load();
   }
 
+  //_______________________________________________________________
+  //FUNCTION TO DRAW THE APP BAR
+  //_______________________________________________________________
+  drawAppBar() {
+    final Brightness brightness = MediaQuery.of(context).platformBrightness;
+    return AppBar(
+      title: Text("${widget.roomName}\nPin: ${widget.pinNumber}",
+          style: const TextStyle(fontSize: 15)),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () => showPopUpScreen(
+            context,
+            brightness == Brightness.dark ? true : false,
+          ),
+          icon: const Icon(Icons.settings),
+        )
+      ],
+    );
+  }
+
+  //_______________________________________________________________
+  //FUNCTION TO DRAW THE DICE
+  //_______________________________________________________________
+  drawDice() {
+    final Brightness brightness = MediaQuery.of(context).platformBrightness;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    return Center(
+      child: brightness == Brightness.dark
+          ? DiceWidget(
+              diceNumber: diceNumber,
+              isWhite: true,
+              screenWidth: screenWidth,
+              screenHeight: screenHeight,
+              numOfDices: numOfDices,
+            )
+          : DiceWidget(
+              diceNumber: diceNumber,
+              isWhite: false,
+              screenWidth: screenWidth,
+              screenHeight: screenHeight,
+              numOfDices: numOfDices,
+            ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     //brightness of the screen
-    final Brightness brightness = MediaQuery.of(context).platformBrightness;
     //screen width and height
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double screenHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
       onTap: () => getRandNumber(diceNumber, 1, 6),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text("${widget.roomName}\nPin: ${widget.pinNumber}",
-              style: const TextStyle(fontSize: 15)),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () => showPopUpScreen(
-                context,
-                brightness == Brightness.dark ? true : false,
-              ),
-              icon: const Icon(Icons.settings),
-            )
-          ],
-        ),
+        appBar: drawAppBar(),
         body: Column(
           children: [
             const SizedBox(height: 30),
             displayStats(),
             SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-            Center(
-              child: brightness == Brightness.dark
-                  ? DiceWidget(
-                      diceNumber: diceNumber,
-                      isWhite: true,
-                      screenWidth: screenWidth,
-                      screenHeight: screenHeight,
-                      numOfDices: numOfDices,
-                    )
-                  : DiceWidget(
-                      diceNumber: diceNumber,
-                      isWhite: false,
-                      screenWidth: screenWidth,
-                      screenHeight: screenHeight,
-                      numOfDices: numOfDices,
-                    ),
-            ),
+            drawDice(),
             const SizedBox(height: 40),
-            Text(
-              toRoll,
-              style: const TextStyle(fontSize: 22),
-            ),
           ],
         ),
         bottomNavigationBar: _banner == null
@@ -248,21 +320,29 @@ class DicePageScreen extends State<DicePage> {
                     ),
                   ],
                 ),
-                DropdownMenu(
-                  width: 200,
-                  dropdownMenuEntries: const [
-                    DropdownMenuEntry(value: 1, label: '1'),
-                    DropdownMenuEntry(value: 2, label: '2'),
-                    DropdownMenuEntry(value: 3, label: '3'),
-                  ],
-                  onSelected: (value) {
-                    setState(() {
-                      numOfDices = value!;
-                      prefs.setInt('numOfDices', numOfDices);
-                      updateDiceValues();
-                    });
-                  },
-                ),
+                //this option should only be available to the host
+                //first need to check if the user is the host
+                isHost
+                    ? DropdownMenu(
+                        width: 200,
+                        dropdownMenuEntries: const [
+                          DropdownMenuEntry(value: 1, label: '1'),
+                          DropdownMenuEntry(value: 2, label: '2'),
+                          DropdownMenuEntry(value: 3, label: '3'),
+                        ],
+                        onSelected: (value) async {
+                          FirebaseFunctions.changeNumOfDice(
+                            roomName: widget.roomName,
+                            numOfDice: value!,
+                          );
+                          setState(() {
+                            numOfDices = value!;
+                            prefs.setInt('numOfDices', numOfDices);
+                            updateDiceValues();
+                          });
+                        },
+                      )
+                    : const SizedBox(),
                 const SizedBox(height: 20),
                 Text("Signed In As: ${user!.email!}"),
                 const SizedBox(height: 20),

@@ -7,6 +7,7 @@ import 'package:dice_pt2/models/start_room_entry.dart';
 import 'package:dice_pt2/pages/view/dice_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -41,6 +42,13 @@ class _StartingPageState extends State<StartingPage> {
   //controllers for the room name and password
   final TextEditingController _RoomNameController = TextEditingController();
   final TextEditingController _RoomPasswordController = TextEditingController();
+
+  @override
+  dispose() {
+    _RoomNameController.dispose();
+    _RoomPasswordController.dispose();
+    super.dispose();
+  }
 
   drawProfilePicture() {
     return FutureBuilder(
@@ -323,6 +331,7 @@ class _StartingPageState extends State<StartingPage> {
   drawJoinRoomButton() {
     return MaterialButton(
       onPressed: () async {
+        print("Join Room Button Pressed");
         await checkPassWithRoom();
       },
       color: Colors.black,
@@ -356,9 +365,9 @@ class _StartingPageState extends State<StartingPage> {
       );
     }
     if (msg == "password is correct") {
+      print("Password is correct: $roomPassword");
       var roomName =
           await FirebaseFunctions.addUserToFirebaseCloud(roomPassword);
-      print("Password is correct");
       //this means that the password is correct
       final route = MaterialPageRoute(
         builder: (context) => DicePage(
