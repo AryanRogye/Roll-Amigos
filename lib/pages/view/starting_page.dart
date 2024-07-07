@@ -305,16 +305,14 @@ class _StartingPageState extends State<StartingPage> {
               .then((value) {
             pinNumber = value.data()!['roomPassword'];
           });
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DicePage(
-                prefs: widget.prefs,
-                roomName: _RoomNameController.text.trim(),
-                pinNumber: pinNumber,
-              ),
+          final route = MaterialPageRoute(
+            builder: (context) => DicePage(
+              prefs: widget.prefs,
+              roomName: _RoomNameController.text.trim(),
+              pinNumber: pinNumber,
             ),
           );
+          Navigator.pushAndRemoveUntil(context, route, (route) => false);
         }
       },
       child: const Text('Start Room',
@@ -358,20 +356,18 @@ class _StartingPageState extends State<StartingPage> {
       );
     }
     if (msg == "password is correct") {
-      print("Password is correct");
-      //this means that the password is correct
       var roomName =
           await FirebaseFunctions.addUserToFirebaseCloud(roomPassword);
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DicePage(
-            prefs: widget.prefs,
-            roomName: roomName,
-            pinNumber: roomPassword,
-          ),
+      print("Password is correct");
+      //this means that the password is correct
+      final route = MaterialPageRoute(
+        builder: (context) => DicePage(
+          prefs: widget.prefs,
+          roomName: roomName,
+          pinNumber: roomPassword,
         ),
       );
+      Navigator.pushAndRemoveUntil(context, route, (route) => false);
     }
   }
 }

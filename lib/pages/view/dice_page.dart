@@ -1,11 +1,15 @@
-// ignore_for_file: no_logic_in_create_state, must_be_immutable, use_build_context_synchronously
+// ignore_for_file: no_logic_in_create_state, must_be_immutable, use_build_context_synchronously, no_leading_underscores_for_local_identifiers
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
+import 'package:dice_pt2/models/display_users.dart';
 import 'package:dice_pt2/models/user_display_game.dart';
+import 'package:dice_pt2/pages/view/screen_navigation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dice_pt2/widgets/dice.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'dart:math';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:dice_pt2/ads/ad_state.dart';
@@ -29,6 +33,7 @@ class DicePage extends StatefulWidget {
 
 //implementing the main page
 class DicePageScreen extends State<DicePage> {
+  var LeaveRoomButtonColor = const Color.fromARGB(255, 227, 227, 227);
   //this is so that the preferences can be used in the main page
   final SharedPreferences prefs; //shared preferences
   final user = FirebaseAuth.instance.currentUser;
@@ -54,10 +59,25 @@ class DicePageScreen extends State<DicePage> {
     updateDiceValues();
     _createBannerAd();
     listenToDiceChanges();
+    listenToRoomExistence();
   }
 
-  Future<int> getNumberOfUsers() async {
-    return await FirebaseFunctions.getNumOfUsers(roomName: widget.roomName);
+  void listenToRoomExistence() {
+    _db
+        .collection('rooms')
+        .doc(widget.roomName)
+        .snapshots()
+        .listen((documentSnapshot) {
+      if (!documentSnapshot.exists) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ScreenNavigation(prefs: prefs),
+          ),
+          (route) => false,
+        );
+      }
+    });
   }
 
   Future<String> getPinNumber() async {
@@ -89,27 +109,24 @@ class DicePageScreen extends State<DicePage> {
 
   void startRollingAnimation() async {
     setState(() {
-      // toRoll = 'Rolling Dice....';
+      getRand(diceNumber, 1, 6);
     });
-    getRand(diceNumber, 1, 6);
+
     await Future.delayed(const Duration(milliseconds: 100));
     setState(() {
       // toRoll = 'Rolling Dice...';
     });
-    getRand(diceNumber, 1, 6);
     await Future.delayed(const Duration(milliseconds: 100));
     setState(() {
-      // toRoll = 'Rolling Dice..';
+      getRand(diceNumber, 1, 6);
     });
-    getRand(diceNumber, 1, 6);
     await Future.delayed(const Duration(milliseconds: 100));
     setState(() {
-      // toRoll = 'Rolling Dice.';
+      getRand(diceNumber, 1, 6);
     });
-    getRand(diceNumber, 1, 6);
     await Future.delayed(const Duration(milliseconds: 100));
     setState(() {
-      // toRoll = 'Tap Screen To Roll Dice';
+      getRand(diceNumber, 1, 6);
     });
 
     // Fetch the final dice values from Firestore
@@ -141,10 +158,7 @@ class DicePageScreen extends State<DicePage> {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     return GestureDetector(
-      onTap: () => setState(() {
-        //on tap play the sound and roll the dice which is rand number between 1 and 6
-        getRandNumber(diceNumber, 1, 6);
-      }),
+      onTap: () => getRandNumber(diceNumber, 1, 6),
       child: Scaffold(
         appBar: AppBar(
           title: Text("${widget.roomName}\nPin: ${widget.pinNumber}",
@@ -161,51 +175,26 @@ class DicePageScreen extends State<DicePage> {
         ),
         body: Column(
           children: [
-            SizedBox(height: 30),
-            Container(
-              alignment: Alignment.center,
-              child: FutureBuilder(
-                  future: getNumberOfUsers(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const CircularProgressIndicator();
-                    } else if (snapshot.hasError) {
-                      return Text(
-                        "Error: ${snapshot.error.toString()}",
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      );
-                    } else if (snapshot.hasData) {
-                      return Text(
-                        "Users: ${snapshot.data}",
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      );
-                    } else {
-                      return const Text("No Data");
-                    }
-                  }),
-            ),
+            const SizedBox(height: 30),
+            displayStats(),
             SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-            brightness == Brightness.dark
-                ? DiceWidget(
-                    diceNumber: diceNumber,
-                    isWhite: true,
-                    screenWidth: screenWidth,
-                    screenHeight: screenHeight,
-                    numOfDices: numOfDices,
-                  )
-                : DiceWidget(
-                    diceNumber: diceNumber,
-                    isWhite: false,
-                    screenWidth: screenWidth,
-                    screenHeight: screenHeight,
-                    numOfDices: numOfDices,
-                  ),
+            Center(
+              child: brightness == Brightness.dark
+                  ? DiceWidget(
+                      diceNumber: diceNumber,
+                      isWhite: true,
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight,
+                      numOfDices: numOfDices,
+                    )
+                  : DiceWidget(
+                      diceNumber: diceNumber,
+                      isWhite: false,
+                      screenWidth: screenWidth,
+                      screenHeight: screenHeight,
+                      numOfDices: numOfDices,
+                    ),
+            ),
             const SizedBox(height: 40),
             Text(
               toRoll,
@@ -242,6 +231,8 @@ class DicePageScreen extends State<DicePage> {
               children: <Widget>[
                 const SizedBox(height: 40),
                 SizedBox(child: Text("Pin: $pinNumber")),
+                //need to draw the leave room here
+                leaveRoomButton(),
                 const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -299,7 +290,7 @@ class DicePageScreen extends State<DicePage> {
 
     for (int i = 0; i < 4; i++) {
       setState(() {
-        toRoll = 'Rolling Dice${'.' * (i + 1)}';
+        // toRoll = 'Rolling Dice${'.' * (i + 1)}';
       });
       getRand(diceNumbers, min, max);
       await Future.delayed(const Duration(milliseconds: 100));
@@ -315,7 +306,7 @@ class DicePageScreen extends State<DicePage> {
     _db.collection('rooms').doc(widget.roomName).update({'rolling': false});
 
     setState(() {
-      toRoll = 'Tap Screen To Roll Dice';
+      // toRoll = 'Tap Screen To Roll Dice';
     });
   }
 
@@ -385,6 +376,130 @@ class DicePageScreen extends State<DicePage> {
           return CircularProgressIndicator();
         }
       },
+    );
+  }
+
+  getUsers() {
+    return StreamBuilder<int>(
+        stream: FirebaseFunctions.getNumOfUsers(roomName: widget.roomName),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text(
+              "Error: ${snapshot.error.toString()}",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            );
+          } else if (snapshot.hasData) {
+            return Text(
+              "Users: ${snapshot.data}",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            );
+          } else {
+            return const Text(
+              "No Data",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            );
+          }
+        });
+  }
+
+  // In the displayStats method, use the new UserCountWidget
+  displayStats() {
+    return Container(
+      alignment: Alignment.center,
+      color: Colors.black,
+      height: MediaQuery.of(context).size.height * 0.1,
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              UserCountWidget(roomName: widget.roomName),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  showAreYouSureDialog() {
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text(
+          "Are you sure you want to leave the room?",
+          style: TextStyle(color: Colors.black),
+        ),
+        content: const Text(
+          "If You Leave The Room The Room Will be Deleted",
+          style: TextStyle(color: Colors.black),
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              print("No");
+              Navigator.pop(context);
+            },
+            child: const Text("No"),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              //only need to delet the room if the user is the host
+              FirebaseFunctions.leaveRoom(
+                  roomName: widget.roomName, prefs: prefs);
+              //now need to check if the room exists if the room doesnt exist then the user should be taken to the home page
+              final route = MaterialPageRoute(
+                builder: (context) => ScreenNavigation(
+                  prefs: prefs,
+                ),
+              );
+              Navigator.pushAndRemoveUntil(context, route, (route) => false);
+            },
+            child: const Text("Yes", style: TextStyle(color: Colors.black)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  leaveRoomButton() {
+    return GestureDetector(
+      onTap: () async {
+        print("pressed");
+        Navigator.pop(context);
+        //need to show a dialog box to confirm if the user wants to leave the room
+        showAreYouSureDialog();
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Container(
+          height: 70,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: LeaveRoomButtonColor,
+          ),
+          alignment: Alignment.center,
+          child: const Text("Leave Room",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              )),
+        ),
+      ),
     );
   }
 }

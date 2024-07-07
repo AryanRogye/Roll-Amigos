@@ -270,16 +270,16 @@ class FirebaseFunctions {
   //_______________________________________________________________
   //GET NUM OF USERS
   //_______________________________________________________________
-  static Future<dynamic> getNumOfUsers({required String roomName}) async {
-    try {
-      final _db = FirebaseFirestore.instance;
-      DocumentSnapshot roomDoc =
-          await _db.collection("rooms").doc(roomName).get();
-      var users = await roomDoc.get("users");
-      return users.length;
-    } catch (e) {
-      return 0;
-    }
+  static Stream<int> getNumOfUsers({required String roomName}) {
+    final _db = FirebaseFirestore.instance;
+    return _db.collection('rooms').doc(roomName).snapshots().map((snapshot) {
+      if (snapshot.exists) {
+        var users = snapshot.get('users') as List<dynamic>;
+        return users.length;
+      } else {
+        return 0;
+      }
+    });
   }
 
   //_______________________________________________________________
@@ -296,5 +296,57 @@ class FirebaseFunctions {
     var firstName = await userDoc.get("firstName");
     var lastName = await userDoc.get("lastName");
     return [firstName, lastName];
+  }
+
+  //_______________________________________________________________
+  //DELETE ROOM
+  //_______________________________________________________________
+  static void deleteRoom({required String roomName}) async {
+    final _db = FirebaseFirestore.instance;
+    await _db.collection("rooms").doc(roomName).delete();
+  }
+
+  //_______________________________________________________________
+  //LEAVE ROOM
+  //_______________________________________________________________
+  static void leaveRoom(
+      {required String roomName, required SharedPreferences prefs}) async {
+    //This Function will delete the room from the rooms collection
+    //check if the user is the host
+    final _db = FirebaseFirestore.instance;
+    String email = FirebaseAuth.instance.currentUser!.email!;
+    DocumentSnapshot roomDoc =
+        await _db.collection("rooms").doc(roomName).get();
+    var hostEmail = await roomDoc.get("host_details");
+    if (hostEmail == email) {
+      //delete the room
+      await _db.collection("rooms").doc(roomName).delete();
+    } else {
+      //need to get FirstName and LastName
+      var firstAndLast = await getFirstNameLastName();
+      var firstName = await firstAndLast[0];
+      var lastName = await firstAndLast[1];
+      //remove the user from the room
+      Map<String, dynamic> data = {
+        "users": FieldValue.arrayRemove([
+          {
+            "email": email,
+            "firstName": firstName,
+            "lastName": lastName,
+          }
+        ]),
+      };
+      await _db.collection("rooms").doc(roomName).update(data);
+    }
+  }
+
+  //_______________________________________________________________
+  //CHECK IF ROOM EXISTS
+  //_______________________________________________________________
+  static Future<bool> checkIfRoomExists(String roomName) async {
+    final _db = FirebaseFirestore.instance;
+    DocumentSnapshot roomDoc =
+        await _db.collection("rooms").doc(roomName).get();
+    return roomDoc.exists;
   }
 }
