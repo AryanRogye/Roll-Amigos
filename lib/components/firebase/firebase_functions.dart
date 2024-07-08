@@ -122,6 +122,8 @@ class FirebaseFunctions {
       "roomPassword": password.toString().trim(),
       "diceNumber": [1, 1, 1],
       "rolling": false,
+      "rollingOrder": [email],
+      "RollingIndex": 0,
       "users": [userData],
       "Number of Dices": 1,
     };
@@ -211,6 +213,8 @@ class FirebaseFunctions {
           // Check if user already exists in the room
           var roomDoc = await _db.collection("rooms").doc(doc.id).get();
           var users = roomDoc.get("users") as List<dynamic>;
+          var rollingOrder = List<String>.from(roomDoc.get("rollingOrder"));
+
           bool userExists =
               users.any((user) => user["email"] == userData["email"]);
 
@@ -218,7 +222,9 @@ class FirebaseFunctions {
             print("The User does not exist in the room: $roomName");
 
             await _db.collection("rooms").doc(doc.id).update({
-              "users": FieldValue.arrayUnion([userData])
+              "users": FieldValue.arrayUnion([userData]),
+              "rollingOrder": FieldValue.arrayUnion(
+                  [userData["email"]]) // Add user to rolling order
             });
             print("User added to room: $roomName");
           } else {
@@ -381,6 +387,12 @@ class FirebaseFunctions {
           }
         ]),
       };
+      //remove the user from the rolling order
+      var rollingOrder = await roomDoc.get("rollingOrder");
+      List<String> newRollingOrder = List<String>.from(rollingOrder);
+      newRollingOrder.remove(email);
+      data["rollingOrder"] = newRollingOrder;
+
       await _db.collection("rooms").doc(roomName).update(data);
     }
   }
@@ -405,5 +417,45 @@ class FirebaseFunctions {
         await _db.collection("rooms").doc(roomName).get();
     var hostEmail = await roomDoc.get("host_details");
     return hostEmail == email;
+  }
+
+  //_______________________________________________________________
+  //GET ALL USER EMAILS
+  //_______________________________________________________________
+  static Future<dynamic> getAllUserEmails({required String roomName}) async {
+    final _db = FirebaseFirestore.instance;
+    DocumentSnapshot roomDoc =
+        await _db.collection("rooms").doc(roomName).get();
+    var users = await roomDoc.get("users");
+    List<String> retEmails = [];
+    for (var user in users) {
+      print(user["email"]);
+      retEmails.add(user["email"]);
+    }
+    return retEmails;
+  }
+
+  //_______________________________________________________________
+  //GET ROLLING ORDER
+  //_______________________________________________________________
+  static Future<dynamic> getRollingOrder({required String roomName}) async {
+    final _db = FirebaseFirestore.instance;
+    DocumentSnapshot roomDoc =
+        await _db.collection("rooms").doc(roomName).get();
+    var rollingOrder = await roomDoc.get("rollingOrder");
+    print("rolling order: $rollingOrder");
+    List<String> retEmails = [];
+    for (var email in rollingOrder) {
+      retEmails.add(email);
+    }
+    return retEmails;
+  }
+
+  static void updateRollingOrder(
+      {required String roomName, required List<String> newOrder}) {
+    final _db = FirebaseFirestore.instance;
+    _db.collection("rooms").doc(roomName).update({
+      "rollingOrder": newOrder,
+    });
   }
 }
