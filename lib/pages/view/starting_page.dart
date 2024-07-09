@@ -1,10 +1,11 @@
-// ignore_for_file: no_leading_underscores_for_local_identifiers, avoid_print, unused_local_variable, dead_code, use_build_context_synchronously
+// ignore_for_file: no_leading_underscores_for_local_identifiers, avoid_print, unused_local_variable, dead_code, use_build_context_synchronously, non_constant_identifier_names
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:dice_pt2/models/join_room_entry.dart';
 import 'package:dice_pt2/models/my_game_start.dart';
 import 'package:dice_pt2/models/start_room_entry.dart';
 import 'package:dice_pt2/pages/view/dice_page.dart';
+import 'package:dice_pt2/themes/const_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,7 +67,9 @@ class _StartingPageState extends State<StartingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: const Text('Dice With Friends',
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -82,37 +85,44 @@ class _StartingPageState extends State<StartingPage> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              //need to bring the 2 starting room into the center of the screen
-              SizedBox(height: MediaQuery.of(context).size.height * 0.15),
-
-              //THIS THE PLACE WHERE THE BUTTONS TO START A ROOM AND JOIN A ROOM WILL BE
-              //THIS IS THE MAIN PART OF THE APP
-
-              //Button For Starting a Room
-              MyGameStart(
-                text: "Start Game",
-                colorBackground: Colors.blue[50],
-                onTapFunction: showBottomScreenForStartingRoom,
-              ),
-
-              //Button for joining a Room
-              const SizedBox(height: 20),
-              MyGameStart(
-                text: "Join Game",
-                colorBackground: Colors.green[50],
-                onTapFunction: showBottomScreenForJoiningRoom,
-              ),
-              //End Of the Buttons
-            ],
-          ),
-        ),
+        child: drawPage(),
       ),
       //THIS IS THE BOTTOM NAVIGATION BAR
       //THIS IS WHERE U CAN GO TO THE HOME PAGE AND THE SETTINGS PAGE
+    );
+  }
+
+  drawPage() {
+    return Container(
+      height: MediaQuery.of(context).size.height,
+      decoration: const BoxDecoration(
+        gradient: constThemes.linGrad,
+      ),
+      child: Column(
+        children: <Widget>[
+          //need to bring the 2 starting room into the center of the screen
+          SizedBox(height: MediaQuery.of(context).size.height * 0.3),
+
+          //THIS THE PLACE WHERE THE BUTTONS TO START A ROOM AND JOIN A ROOM WILL BE
+          //THIS IS THE MAIN PART OF THE APP
+
+          //Button For Starting a Room
+          MyGameStart(
+            text: "Start Game",
+            colorBackground: Colors.blue[50],
+            onTapFunction: showBottomScreenForStartingRoom,
+          ),
+
+          //Button for joining a Room
+          const SizedBox(height: 20),
+          MyGameStart(
+            text: "Join Game",
+            colorBackground: Colors.green[50],
+            onTapFunction: showBottomScreenForJoiningRoom,
+          ),
+          //End Of the Buttons
+        ],
+      ),
     );
   }
 
@@ -126,7 +136,6 @@ class _StartingPageState extends State<StartingPage> {
     //showing the bottom sheet
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
       isScrollControlled: true,
       builder: (BuildContext context) {
         final modalContext = context;
@@ -134,7 +143,14 @@ class _StartingPageState extends State<StartingPage> {
           builder: (BuildContext context, BoxConstraints constraints) {
             var maxHeight = constraints.maxHeight;
             return SingleChildScrollView(
-              child: SizedBox(
+              child: Container(
+                decoration: const BoxDecoration(
+                  gradient: constThemes.modelGrad,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
                 height: maxHeight - 100,
                 width: MediaQuery.of(context).size.width,
                 child: Column(

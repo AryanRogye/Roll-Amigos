@@ -2,6 +2,7 @@
 
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:dice_pt2/pages/auth/forgot_pw.dart';
+import 'package:dice_pt2/themes/const_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile_picture/flutter_profile_picture.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,22 +30,31 @@ class _SettingsPagecState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         title: const Text('Settings'),
       ),
-      body: Column(
-        children: [
-          drawProfilePicture(),
-          Container(color: Colors.black, height: 1),
-          drawDisplayName(),
-          Container(color: Colors.black, height: 1),
-          drawDisplayEmail(),
-          Container(color: Colors.black, height: 1),
-          drawChangePassword(),
-          Container(color: Colors.black, height: 1),
-          drawSignOut(),
-          Container(color: Colors.black, height: 1),
-        ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: constThemes.linGrad,
+        ),
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          children: [
+            const SizedBox(height: 120),
+            drawProfilePicture(),
+            Container(color: const Color.fromARGB(255, 41, 41, 41), height: 1),
+            drawDisplayName(),
+            Container(color: const Color.fromARGB(255, 41, 41, 41), height: 1),
+            drawDisplayEmail(),
+            Container(color: const Color.fromARGB(255, 41, 41, 41), height: 1),
+            drawChangePassword(),
+            Container(color: const Color.fromARGB(255, 41, 41, 41), height: 1),
+            drawSignOut(),
+            Container(color: const Color.fromARGB(255, 41, 41, 41), height: 1),
+          ],
+        ),
       ),
     );
   }

@@ -12,7 +12,19 @@ class constThemes {
       Colors.black,
       Color.fromARGB(255, 14, 14, 14),
     ],
-    begin: Alignment.centerRight,
+    begin: Alignment.topCenter,
+    end: Alignment.centerLeft,
+    // begin: Alignment.centerRight,
+    // end: Alignment.centerLeft,
+  );
+
+  static const modelGrad = LinearGradient(
+    colors: [
+      Color.fromARGB(255, 255, 255, 255),
+      Color.fromARGB(255, 205, 205, 205),
+      Color.fromARGB(255, 165, 165, 165),
+    ],
+    begin: Alignment.topCenter,
     end: Alignment.centerLeft,
   );
 

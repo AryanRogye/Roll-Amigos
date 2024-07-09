@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:dice_pt2/themes/const_themes.dart';
 import 'package:flutter/material.dart';
 
 class MyGameStart extends StatefulWidget {
@@ -42,32 +43,27 @@ class _MyGameStartState extends State<MyGameStart> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(10),
-              color: widget.colorBackground,
-              // image: const DecorationImage(
-              //     image: AssetImage("assets/images/buttonBackground.png"),
-              //     fit: BoxFit.scaleDown,
-              //     alignment: Alignment.centerRight),
-            ),
+            decoration: constThemes.myBoxDecoration,
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height * 0.2,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(firstSplitText,
-                    style: const TextStyle(
-                      fontSize: 30,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    )),
+                Text(
+                  firstSplitText,
+                  style: constThemes.getWorkSansFont(
+                    Colors.white,
+                    30,
+                    FontWeight.bold,
+                  ),
+                ),
                 Text(
                   secondSplitText,
-                  style: const TextStyle(
-                      fontSize: 30,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold),
+                  style: constThemes.getWorkSansFont(
+                    Colors.white,
+                    30,
+                    FontWeight.bold,
+                  ),
                 ),
               ],
             ),
