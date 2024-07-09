@@ -47,7 +47,7 @@ class App extends StatelessWidget {
     ]);
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        themeMode: ThemeMode.system,
+        themeMode: ThemeMode.dark,
         theme: TSystemTheme.lightTheme,
         darkTheme: TSystemTheme.darkTheme,
         home: HomePage(prefs: prefs));

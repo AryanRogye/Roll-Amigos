@@ -3,6 +3,7 @@ import 'package:dice_pt2/components/firebase/firebase_functions.dart';
 import 'package:dice_pt2/models/my_button.dart';
 import 'package:dice_pt2/models/my_textfield.dart';
 import 'package:dice_pt2/pages/auth/forgot_pw.dart';
+import 'package:dice_pt2/themes/const_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -45,20 +46,6 @@ class _SignInPageState extends State<SignInPage> {
             children: [
               //this is where the intro page will be
               //will describe the app and what it does
-              Container(
-                //TODO
-                child: SafeArea(
-                  child: Column(
-                    // * this is the column for the intro page
-                    //! this is where I'm going to have a welcome screen to talk about the app
-                    children: <Widget>[
-                      const Text("Welcome to the Dice App",
-                          style: TextStyle(fontSize: 20)),
-                      Image.asset("assets/gif/DiceRollingAnimation.gif"),
-                    ],
-                  ),
-                ),
-              ),
               /**
                * This is the sign in page
                * this is where the user will sign in no matter what
@@ -66,7 +53,9 @@ class _SignInPageState extends State<SignInPage> {
                */
 
               Container(
-                  color: const Color.fromARGB(255, 85, 100, 80),
+                  decoration: const BoxDecoration(
+                    gradient: constThemes.linGrad,
+                  ),
                   child: SafeArea(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -109,7 +98,7 @@ class _SignInPageState extends State<SignInPage> {
           SafeArea(
             child: Container(
               alignment: Alignment.bottomCenter,
-              child: SmoothPageIndicator(controller: _controller, count: 2),
+              child: SmoothPageIndicator(controller: _controller, count: 1),
             ),
           ),
         ],
@@ -119,17 +108,25 @@ class _SignInPageState extends State<SignInPage> {
 
   //DRAWING THE WELCOME BACK TO THE DICE APP AND SIGN IN WITH YOUR EMAIL OR PHONE NUMBER
   printWelcomeToDiceApp() {
-    return const Text(
+    return Text(
       'Welcome Back To The Dice App',
-      style: TextStyle(
-          fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+      style: constThemes.getWorkSansFont(
+        Colors.white,
+        22,
+        FontWeight.bold,
+      ),
     );
   }
 
   printSignInWithEmailOrPhoneNumber() {
-    return const Text('Sign In With Your Email or PhoneNumber',
-        style: TextStyle(
-            fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white));
+    return Text(
+      'Sign In With Your Email or PhoneNumber',
+      style: constThemes.getWorkSansFont(
+        Colors.white,
+        18,
+        FontWeight.w500,
+      ),
+    );
   }
   //END OF THE DRAWING THE WELCOME BACK TO THE DICE APP AND SIGN IN WITH YOUR EMAIL OR PHONE NUMBER
 

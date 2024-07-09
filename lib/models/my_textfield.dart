@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:dice_pt2/themes/const_themes.dart';
 import 'package:flutter/material.dart';
 
 class MyTextfield extends StatefulWidget {
@@ -20,18 +21,14 @@ class MyTextfield extends StatefulWidget {
 }
 
 class _MyTextfieldState extends State<MyTextfield> {
-  var icon = Icon(Icons.visibility_off);
+  var icon = const Icon(Icons.visibility_off, color: Colors.white);
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: Container(
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 111, 129, 104),
-          border: Border.all(color: const Color.fromARGB(255, 131, 151, 122)),
-          borderRadius: BorderRadius.circular(13),
-        ),
+        decoration: constThemes.myTextFieldBoxDecoration,
         child: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: TextField(
@@ -46,16 +43,23 @@ class _MyTextfieldState extends State<MyTextfield> {
                         setState(() {
                           widget.obscureText = !widget.obscureText;
                           if (widget.obscureText) {
-                            icon = const Icon(Icons.visibility_off);
+                            icon = const Icon(
+                              Icons.visibility_off,
+                              color: Colors.white,
+                            );
                           } else {
-                            icon = const Icon(Icons.visibility);
-                          } 
+                            icon = const Icon(
+                              Icons.visibility,
+                              color: Colors.white,
+                            );
+                          }
                         });
                       },
                     )
                   : null,
               border: InputBorder.none,
               hintText: widget.hintText,
+              hintStyle: constThemes.hintTextTheme,
             ),
           ),
         ),

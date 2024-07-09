@@ -17,6 +17,7 @@ dependencies:
   
   flutter_cube: ^0.1.1
   flutter_profile_picture: ^2.0.0
+  google_fonts: ^6.2.1
   google_mobile_ads: ^5.1.0
   google_nav_bar: ^5.0.6
   provider: ^6.1.2
