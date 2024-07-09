@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:dice_pt2/themes/const_themes.dart';
 import 'package:flutter/material.dart';
 
 class MyButton extends StatefulWidget {
@@ -20,11 +21,7 @@ class _MyButtonState extends State<MyButton> {
         onTap: widget.func,
         child: Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 149, 172, 140),
-            border: Border.all(color: const Color.fromARGB(255, 183, 211, 170)),
-            borderRadius: BorderRadius.circular(13),
-          ),
+          decoration: constThemes.myBoxDecoration,
           child: Center(
             child: Text(widget.text,
                 style:

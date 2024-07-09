@@ -28,7 +28,7 @@ class _MyTextfieldState extends State<MyTextfield> {
       padding: const EdgeInsets.symmetric(horizontal: 25),
       child: Container(
         alignment: Alignment.center,
-        decoration: constThemes.myTextFieldBoxDecoration,
+        decoration: constThemes.myBoxDecoration,
         child: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: TextField(

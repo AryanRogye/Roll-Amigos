@@ -5,6 +5,7 @@ import 'package:dice_pt2/models/my_button.dart';
 import 'package:dice_pt2/models/my_name_entry.dart';
 import 'package:dice_pt2/models/my_textfield.dart';
 import 'package:dice_pt2/pages/auth/home_page.dart';
+import 'package:dice_pt2/themes/const_themes.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -56,7 +57,9 @@ class _RegisterPageState extends State<RegisterPage> {
            */
 
           Container(
-            color: const Color.fromARGB(255, 85, 100, 80),
+            decoration: BoxDecoration(
+              gradient: constThemes.linGrad,
+            ),
             child: SafeArea(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -100,17 +103,25 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   printWelcomeToDiceApp() {
-    return const Text(
+    return Text(
       'Hello There',
-      style: TextStyle(
-          fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+      style: constThemes.getWorkSansFont(
+        Colors.white,
+        22,
+        FontWeight.bold,
+      ),
     );
   }
 
   printSignInWithEmailOrPhoneNumber() {
-    return const Text('Register Below With Your Email',
-        style: TextStyle(
-            fontSize: 18, fontWeight: FontWeight.w500, color: Colors.white));
+    return Text(
+      'Register Below With Your Email',
+      style: constThemes.getWorkSansFont(
+        Colors.white,
+        18,
+        FontWeight.w500,
+      ),
+    );
   }
 
   emailSignIn() {
