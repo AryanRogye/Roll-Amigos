@@ -35,6 +35,7 @@ class _MyTextfieldState extends State<MyTextfield> {
             controller: widget.textfieldController,
             autocorrect: false,
             obscureText: widget.obscureText,
+            cursorColor: Colors.white,
             decoration: InputDecoration(
               suffixIcon: widget.isPassword
                   ? IconButton(

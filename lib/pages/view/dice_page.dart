@@ -390,7 +390,7 @@ class DicePageScreen extends State<DicePage> {
                             numOfDice: value!,
                           );
                           setState(() {
-                            numOfDices = value!;
+                            numOfDices = value;
                             prefs.setInt('numOfDices', numOfDices);
                             updateDiceValues();
                           });
