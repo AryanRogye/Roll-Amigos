@@ -1,5 +1,4 @@
 import 'package:dice_pt2/models/join_room_entry.dart';
-import 'package:dice_pt2/models/start_room_entry.dart';
 import 'package:flutter/material.dart';
 
 class DrawJoinGameOptions extends StatefulWidget {

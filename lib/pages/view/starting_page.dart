@@ -180,105 +180,105 @@ class _StartingPageState extends State<StartingPage> {
   //Bottom bar for the app
   //This will be used to navigate between the home page and the settings pagec
 
-  void showBottomScreenForStartingRoom() {
-    //clearing the text fields
-    _RoomNameController.clear();
-    _RoomPasswordController.clear();
-    //showing the bottom sheet
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        final modalContext = context;
-        return LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            var maxHeight = constraints.maxHeight;
-            return SingleChildScrollView(
-              child: Container(
-                decoration: const BoxDecoration(
-                  gradient: constThemes.modelGrad,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                height: maxHeight - 100,
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  //THIS IS THE START OF THE BOTTOM SHEET
-                  children: <Widget>[
-                    const SizedBox(height: 10),
-                    //THIS IS THE TITLE OF THE BOTTOM SHEET
-                    const Text(
-                      'Start Game',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
-                    const SizedBox(height: 20),
-                    //THIS IS THE TEXTFIELD
-                    StartRoomEntry(
-                        textfieldController: _RoomNameController,
-                        hintText: 'Enter a Room Name'),
-                    const SizedBox(height: 20),
-                    drawStartRoomButton(),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+  // void showBottomScreenForStartingRoom() {
+  //   //clearing the text fields
+  //   _RoomNameController.clear();
+  //   _RoomPasswordController.clear();
+  //   //showing the bottom sheet
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     builder: (BuildContext context) {
+  //       final modalContext = context;
+  //       return LayoutBuilder(
+  //         builder: (BuildContext context, BoxConstraints constraints) {
+  //           var maxHeight = constraints.maxHeight;
+  //           return SingleChildScrollView(
+  //             child: Container(
+  //               decoration: const BoxDecoration(
+  //                 gradient: constThemes.modelGrad,
+  //                 borderRadius: BorderRadius.only(
+  //                   topLeft: Radius.circular(20),
+  //                   topRight: Radius.circular(20),
+  //                 ),
+  //               ),
+  //               height: maxHeight - 100,
+  //               width: MediaQuery.of(context).size.width,
+  //               child: Column(
+  //                 //THIS IS THE START OF THE BOTTOM SHEET
+  //                 children: <Widget>[
+  //                   const SizedBox(height: 10),
+  //                   //THIS IS THE TITLE OF THE BOTTOM SHEET
+  //                   const Text(
+  //                     'Start Game',
+  //                     style: TextStyle(
+  //                         fontSize: 24,
+  //                         fontWeight: FontWeight.bold,
+  //                         color: Colors.black),
+  //                   ),
+  //                   const SizedBox(height: 20),
+  //                   //THIS IS THE TEXTFIELD
+  //                   StartRoomEntry(
+  //                       textfieldController: _RoomNameController,
+  //                       hintText: 'Enter a Room Name'),
+  //                   const SizedBox(height: 20),
+  //                   drawStartRoomButton(),
+  //                 ],
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
-  void showBottomScreenForJoiningRoom() {
-    //clearing the text fields
-    _RoomNameController.clear();
-    _RoomPasswordController.clear();
-    //showing the bottom sheet
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        final modalContext = context;
-        return LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            var maxHeight = constraints.maxHeight;
-            return SingleChildScrollView(
-              child: SizedBox(
-                height: maxHeight - 100,
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  //THIS IS THE START OF THE BOTTOM SHEET
-                  children: <Widget>[
-                    const SizedBox(height: 10),
-                    //THIS IS THE TITLE OF THE BOTTOM SHEET
-                    const Text(
-                      'Join Game',
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
-                    const SizedBox(height: 20),
-                    //THIS IS THE TEXTFIELD
-                    JoinRoomEntry(
-                        textfieldController: _RoomPasswordController,
-                        hintText: 'Pin'),
-                    const SizedBox(height: 20),
-                    drawJoinRoomButton(),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+  // void showBottomScreenForJoiningRoom() {
+  //   //clearing the text fields
+  //   _RoomNameController.clear();
+  //   _RoomPasswordController.clear();
+  //   //showing the bottom sheet
+  //   showModalBottomSheet(
+  //     context: context,
+  //     backgroundColor: Colors.white,
+  //     isScrollControlled: true,
+  //     builder: (BuildContext context) {
+  //       final modalContext = context;
+  //       return LayoutBuilder(
+  //         builder: (BuildContext context, BoxConstraints constraints) {
+  //           var maxHeight = constraints.maxHeight;
+  //           return SingleChildScrollView(
+  //             child: SizedBox(
+  //               height: maxHeight - 100,
+  //               width: MediaQuery.of(context).size.width,
+  //               child: Column(
+  //                 //THIS IS THE START OF THE BOTTOM SHEET
+  //                 children: <Widget>[
+  //                   const SizedBox(height: 10),
+  //                   //THIS IS THE TITLE OF THE BOTTOM SHEET
+  //                   const Text(
+  //                     'Join Game',
+  //                     style: TextStyle(
+  //                         fontSize: 24,
+  //                         fontWeight: FontWeight.bold,
+  //                         color: Colors.black),
+  //                   ),
+  //                   const SizedBox(height: 20),
+  //                   //THIS IS THE TEXTFIELD
+  //                   JoinRoomEntry(
+  //                       textfieldController: _RoomPasswordController,
+  //                       hintText: 'Pin'),
+  //                   const SizedBox(height: 20),
+  //                   drawJoinRoomButton(),
+  //                 ],
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 
   /// This function will show a dialog asking the user if they are sure they want to sign out
   /// If the user clicks yes then they will be signed out
