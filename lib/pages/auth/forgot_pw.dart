@@ -26,6 +26,7 @@ class _ForgotPwState extends State<ForgotPw> {
 
   showForgotPw() {
     return Container(
+      height: MediaQuery.of(context).size.height,
       decoration: const BoxDecoration(
         gradient: constThemes.linGrad,
       ),
@@ -95,23 +96,21 @@ class _ForgotPwState extends State<ForgotPw> {
             Container(
               decoration: constThemes.myBoxDecoration,
               width: 200,
-              child: Expanded(
-                child: MaterialButton(
-                  onPressed: () {
-                    sendForgotPwEmail();
-                  },
-                  focusColor: Colors.transparent,
-                  hoverColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Text(
-                    "Send Email",
-                    style: constThemes.getWorkSansFont(
-                        Colors.white, 16, FontWeight.normal),
-                  ),
+              child: MaterialButton(
+                onPressed: () {
+                  sendForgotPwEmail();
+                },
+                focusColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Text(
+                  "Send Email",
+                  style: constThemes.getWorkSansFont(
+                      Colors.white, 16, FontWeight.normal),
                 ),
               ),
             )
