@@ -302,7 +302,6 @@ class DicePageScreen extends State<DicePage> {
   //FUNCTION TO DRAW THE DICE
   //_______________________________________________________________
   drawDice() {
-    final Brightness brightness = MediaQuery.of(context).platformBrightness;
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return Center(
