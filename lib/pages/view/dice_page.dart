@@ -1,4 +1,4 @@
-// ignore_for_file: no_logic_in_create_state, must_be_immutable, use_build_context_synchronously, no_leading_underscores_for_local_identifiers
+// ignore_for_file: no_logic_in_create_state, must_be_immutable, use_build_context_synchronously, no_leading_underscores_for_local_identifiers, non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
@@ -6,6 +6,7 @@ import 'package:dice_pt2/models/display_users.dart';
 import 'package:dice_pt2/models/user_display_game.dart';
 import 'package:dice_pt2/pages/view/rolling_order.dart';
 import 'package:dice_pt2/pages/view/screen_navigation.dart';
+import 'package:dice_pt2/themes/const_themes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:dice_pt2/widgets/dice.dart';
@@ -42,6 +43,7 @@ class DicePageScreen extends State<DicePage> {
   late bool isHost;
   late List<String> rollingOrder = [];
   late int currIndex = 0;
+  String users = "";
 
   String toRoll = "";
 
@@ -54,6 +56,7 @@ class DicePageScreen extends State<DicePage> {
   //list of dice numbers rn only 3 dice cuz its easier to implement
   List<int> diceNumber = [1, 1, 1];
   late int numOfDices = 1;
+  bool isRolling = false;
   @override
   void initState() {
     super.initState();
@@ -67,6 +70,15 @@ class DicePageScreen extends State<DicePage> {
     listenToRoomExistence();
     listenToDiceNumChanges();
     listenToDiceRollingOrderChanges();
+    listenToUserCount();
+  }
+
+  void listenToUserCount() {
+    FirebaseFunctions.getNumOfUsers(roomName: widget.roomName).listen((event) {
+      setState(() {
+        users = event.toString();
+      });
+    });
   }
 
   void listenToDiceRollingOrderChanges() {
@@ -270,7 +282,9 @@ class DicePageScreen extends State<DicePage> {
   drawAppBar() {
     final Brightness brightness = MediaQuery.of(context).platformBrightness;
     return AppBar(
-      title: Text("${widget.roomName}\nPin: ${widget.pinNumber}",
+      toolbarHeight: 100,
+      backgroundColor: Colors.transparent,
+      title: Text("${widget.roomName}\nPin: ${widget.pinNumber}\nUsers: $users",
           style: const TextStyle(fontSize: 15)),
       actions: <Widget>[
         IconButton(
@@ -292,22 +306,87 @@ class DicePageScreen extends State<DicePage> {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return Center(
-      child: brightness == Brightness.dark
-          ? DiceWidget(
-              diceNumber: diceNumber,
-              isWhite: true,
-              screenWidth: screenWidth,
-              screenHeight: screenHeight,
-              numOfDices: numOfDices,
-            )
-          : DiceWidget(
-              diceNumber: diceNumber,
-              isWhite: false,
-              screenWidth: screenWidth,
-              screenHeight: screenHeight,
-              numOfDices: numOfDices,
-            ),
+      child: DiceWidget(
+        diceNumber: diceNumber,
+        isWhite: true,
+        screenWidth: screenWidth,
+        screenHeight: screenHeight,
+        numOfDices: numOfDices,
+      ),
     );
+  }
+
+  void rollDiceContinuously() async {
+    while (isRolling) {
+      setState(() {
+        getRand(diceNumber, 1, 6);
+      });
+
+      // Update Firestore with current dice values
+      _db
+          .collection('rooms')
+          .doc(widget.roomName)
+          .update({'diceNumber': diceNumber}).then((_) {
+        print("Dice numbers updated in Firestore");
+      }).catchError((error) {
+        print("Failed to update dice numbers in Firestore: $error");
+      });
+
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+  }
+
+  void startRolling() async {
+    var roomDoc = await _db.collection('rooms').doc(widget.roomName).get();
+    //getting the rolling order
+    rollingOrder = List<String>.from(roomDoc.get("rollingOrder"));
+    //the currentIndex of the rolling order
+    int currentIndex = roomDoc.get("RollingIndex");
+    //making sure that the rolling order is not empty
+
+    if (rollingOrder.isEmpty) {
+      print('Rolling order is empty.');
+      return;
+    }
+
+    // Ensure the user is the one in the rolling order
+    if (rollingOrder[currentIndex] != user!.email) {
+      print('Not your turn: it\'s ${rollingOrder[currentIndex]}\'s turn');
+      return;
+    }
+
+    if (!isRolling) {
+      isRolling = true;
+      await _db
+          .collection('rooms')
+          .doc(widget.roomName)
+          .update({'rolling': true});
+      rollDiceContinuously();
+    }
+  }
+
+  void stopRolling() async {
+    // only works if the user is the one in the rolling order
+    if (isRolling) {
+      isRolling = false;
+      int currentIndex = (currIndex + 1) % rollingOrder.length;
+
+      // Generate final dice values
+      getRand(diceNumber, 1, 6);
+
+      // Save final dice values to Firestore
+      updateDiceInFirestore();
+
+      // Stop rolling animation and update index
+      await _db.collection('rooms').doc(widget.roomName).update({
+        'rolling': false,
+        'RollingIndex': currentIndex,
+      });
+
+      setState(() {
+        currIndex = currentIndex;
+      });
+    }
   }
 
   @override
@@ -316,18 +395,34 @@ class DicePageScreen extends State<DicePage> {
     //screen width and height
 
     return GestureDetector(
-      onTap: () => getRandNumber(diceNumber, 1, 6),
+      onLongPressStart: (_) => startRolling(),
+      onLongPressEnd: (_) => stopRolling(),
+      // onTap: () => getRandNumber(diceNumber, 1, 6),
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: drawAppBar(),
-        body: Column(
-          children: [
-            const SizedBox(height: 30),
-            displayStats(),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.2),
-            drawDice(),
-            const SizedBox(height: 40),
-          ],
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: const BoxDecoration(
+            gradient: constThemes.linGrad,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              //need to draw the dice
+              Center(child: drawDice()),
+            ],
+          ),
         ),
+        // Column(
+        //   children: [
+        //     const SizedBox(height: 30),
+        //     displayStats(),
+        //     SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+        //     drawDice(),
+        //     const SizedBox(height: 40),
+        //   ],
+        // ),
         bottomNavigationBar: _banner == null
             ? Container()
             : Container(
@@ -559,6 +654,9 @@ class DicePageScreen extends State<DicePage> {
               ),
             );
           } else if (snapshot.hasData) {
+            setState(() {
+              users = snapshot.data.toString();
+            });
             return Text(
               "Users: ${snapshot.data}",
               style: const TextStyle(
