@@ -2,7 +2,6 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dice_pt2/components/firebase/firebase_functions.dart';
-import 'package:dice_pt2/models/display_users.dart';
 import 'package:dice_pt2/models/user_display_game.dart';
 import 'package:dice_pt2/pages/view/rolling_order.dart';
 import 'package:dice_pt2/pages/view/screen_navigation.dart';
