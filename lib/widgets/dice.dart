@@ -28,14 +28,12 @@ class DiceWidget extends StatelessWidget {
     //if one will keey it like this if 2 need them on top of each other so will prolly do a center with a column
     //if 3 need to do 2 in a row and one in the middle of them
     if (numOfDices == 1) {
-      print('numOfDices: is 1');
       return SizedBox(
         width: screenWidth * 0.3,
         height: screenHeight * 0.15,
         child: getDice(diceNumber[0]),
       );
     } else if (numOfDices == 2) {
-      print('numOfDices: is 2');
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

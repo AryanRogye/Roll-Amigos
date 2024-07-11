@@ -42,7 +42,7 @@ class DicePageScreen extends State<DicePage> {
   late List<String> rollingOrder = [];
   late int currIndex = 0;
   String users = "";
-
+  String notYourTurn = "";
   String toRoll = "";
 
   //constructor
@@ -350,6 +350,13 @@ class DicePageScreen extends State<DicePage> {
 
     // Ensure the user is the one in the rolling order
     if (rollingOrder[currentIndex] != user!.email) {
+      setState(() {
+        notYourTurn = "Not Your Turn";
+      });
+      await Future.delayed(const Duration(seconds: 2));
+      setState(() {
+        notYourTurn = "";
+      });
       return;
     }
 
@@ -416,9 +423,15 @@ class DicePageScreen extends State<DicePage> {
               const SizedBox(height: 150),
               //NEED TO DRAW A BOX HERE TO SHOW THE STATS AND HELPING GUIDES
               displayStats(),
-              Text("Hold The Screen To Roll",
-                  style: constThemes.getWorkSansFont(
-                      Colors.white, 22, FontWeight.bold)),
+              const SizedBox(height: 20),
+              Text(
+                "Hold The Screen To Roll",
+                style: constThemes.getWorkSansFont(
+                  Colors.white,
+                  22,
+                  FontWeight.bold,
+                ),
+              ),
               //need to draw the dice
               Expanded(
                 child: Center(
@@ -545,11 +558,9 @@ class DicePageScreen extends State<DicePage> {
     _db
         .collection('rooms')
         .doc(widget.roomName)
-        .update({'diceNumber': diceNumber}).then((_) {
-      print("Dice numbers updated in Firestore");
-    }).catchError((error) {
-      print("Failed to update dice numbers in Firestore: $error");
-    });
+        .update({'diceNumber': diceNumber})
+        .then((_) {})
+        .catchError((error) {});
   }
 
   //_______________________________________________________________
@@ -575,8 +586,6 @@ class DicePageScreen extends State<DicePage> {
             for (var user in users) {
               var firstName = user['firstName'];
               var lastName = user['lastName'];
-
-              print("firebase user: $firstName $lastName");
 
               userWidgets.add(
                 UserDisplayGame(
@@ -626,6 +635,85 @@ class DicePageScreen extends State<DicePage> {
                 ),
               ),
             ),
+            Text(
+              notYourTurn,
+              style: constThemes.getWorkSansFont(
+                Colors.red,
+                22,
+                FontWeight.bold,
+              ),
+            ),
+            Row(
+              //over here going to show 2 buttons one to skip roll or one to go back a roll
+              //the go back a roll should only be available to the host
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "Back Roll",
+                  style: constThemes.getWorkSansFont(
+                    Colors.white,
+                    20,
+                    FontWeight.bold,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    if (isHost) {
+                      int newIndex = (currIndex - 1) % rollingOrder.length;
+                      if (newIndex < 0) {
+                        newIndex = rollingOrder.length - 1;
+                      }
+                      _db
+                          .collection('rooms')
+                          .doc(widget.roomName)
+                          .update({'RollingIndex': newIndex});
+                    } else {
+                      setState(() {
+                        notYourTurn = "Only The Host Can Do This";
+                      });
+                      Future.delayed(const Duration(seconds: 2), () {
+                        setState(() {
+                          notYourTurn = "";
+                        });
+                      });
+                    }
+                  },
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                ),
+                IconButton(
+                  onPressed: () {
+                    //can only skip if its the users turn
+                    if (rollingOrder.isNotEmpty &&
+                            rollingOrder[currIndex] == user!.email ||
+                        isHost) {
+                      int newIndex = (currIndex + 1) % rollingOrder.length;
+                      _db
+                          .collection('rooms')
+                          .doc(widget.roomName)
+                          .update({'RollingIndex': newIndex});
+                    } else {
+                      setState(() {
+                        notYourTurn = "Only Can Skip On You Turn";
+                      });
+                      Future.delayed(const Duration(seconds: 2), () {
+                        setState(() {
+                          notYourTurn = "";
+                        });
+                      });
+                    }
+                  },
+                  icon: const Icon(Icons.arrow_forward, color: Colors.white),
+                ),
+                Text(
+                  "Skip Roll",
+                  style: constThemes.getWorkSansFont(
+                    Colors.white,
+                    20,
+                    FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -647,7 +735,6 @@ class DicePageScreen extends State<DicePage> {
         actions: <Widget>[
           TextButton(
             onPressed: () {
-              print("No");
               Navigator.pop(context);
             },
             child: const Text("No"),
@@ -676,7 +763,6 @@ class DicePageScreen extends State<DicePage> {
   leaveRoomButton() {
     return GestureDetector(
       onTap: () async {
-        print("pressed");
         Navigator.pop(context);
         //need to show a dialog box to confirm if the user wants to leave the room
         showAreYouSureDialog();
