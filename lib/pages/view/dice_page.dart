@@ -282,8 +282,16 @@ class DicePageScreen extends State<DicePage> {
     return AppBar(
       toolbarHeight: 100,
       backgroundColor: Colors.transparent,
-      title: Text("${widget.roomName}\nPin: ${widget.pinNumber}\nUsers: $users",
-          style: const TextStyle(fontSize: 15)),
+      flexibleSpace: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 29),
+          child: Text("Pin: ${widget.pinNumber} Users: $users",
+              style: constThemes.getWorkSansFont(
+                  Colors.white, 30, FontWeight.bold)),
+        ),
+      ),
+      // title: Text("${widget.roomName}\nPin: ${widget.pinNumber}\nUsers: $users",
+      //     style: const TextStyle(fontSize: 15)),
       actions: <Widget>[
         IconButton(
           onPressed: () => showPopUpScreen(
@@ -468,7 +476,7 @@ class DicePageScreen extends State<DicePage> {
       builder: (BuildContext context) {
         return SingleChildScrollView(
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.6,
+            height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             child: Column(
               children: <Widget>[
@@ -626,7 +634,7 @@ class DicePageScreen extends State<DicePage> {
           children: [
             Flexible(
               child: Text(
-                "Current Roll User: \n${rollingOrder.isNotEmpty ? rollingOrder[currIndex] : 'None'}",
+                "Your Turn To Roll!! \n${rollingOrder.isNotEmpty ? rollingOrder[currIndex] : 'None Right Now'}",
                 style: constThemes.getWorkSansFont(
                   Colors.white,
                   20,

@@ -332,7 +332,6 @@ class _StartingPageState extends State<StartingPage> {
     //error handling to make sure same copy of the room doesnt exist
     if (msg == "Room already exists") {
       //first need to close the bottom sheet
-      Navigator.pop(context);
       //need to show a dialog saying that the room already exists
       roomCreationDone = false;
       return showDialog(
@@ -409,7 +408,6 @@ class _StartingPageState extends State<StartingPage> {
     var msg = await FirebaseFunctions.checkPassWithRoom(roomPassword);
 
     if (msg == "password is incorrect") {
-      Navigator.pop(context);
       return showDialog(
         context: context,
         builder: (context) => AlertDialog(

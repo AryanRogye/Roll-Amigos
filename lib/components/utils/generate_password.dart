@@ -2,9 +2,9 @@ import 'dart:math';
 
 class GeneratePassword {
   static int genPassword() {
-    //need to generate a random number between 1000 and 9999
+    // Generate a random number between 100000 and 999999
     Random random = new Random();
-    int password = random.nextInt(9999 - 1000) + 1000;
+    int password = random.nextInt(999999 - 100000 + 1) + 100000;
     return password;
   }
 }
