@@ -1,82 +1,78 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
-//basically the class to display which dice it is and the number
-//all the images are in the assets just need to find a way to see which dice it is
-class DiceWidget extends StatelessWidget {
-  //requiring to show the dice number
+class Dice extends StatefulWidget {
   late List<int> diceNumber;
-  //if true then showing the white dice else black dice
-  late bool isWhite;
+  late bool isRollingUser;
   late double screenWidth;
   late double screenHeight;
   late int numOfDices;
-
-  DiceWidget({
+  Dice({
     super.key,
     required this.diceNumber,
-    required this.isWhite,
     required this.screenWidth,
     required this.screenHeight,
     required this.numOfDices,
+    required this.isRollingUser,
   });
 
   @override
+  State<Dice> createState() => _DiceState();
+}
+
+class _DiceState extends State<Dice> {
+  @override
   Widget build(BuildContext context) {
-    //now I need to check how to display the dice
-    //if one will keey it like this if 2 need them on top of each other so will prolly do a center with a column
-    //if 3 need to do 2 in a row and one in the middle of them
-    if (numOfDices == 1) {
+    if (widget.numOfDices == 1) {
       return SizedBox(
-        width: screenWidth * 0.3,
-        height: screenHeight * 0.15,
-        child: getDice(diceNumber[0]),
+        width: widget.screenWidth * 0.3,
+        height: widget.screenHeight * 0.15,
+        child: getDice(widget.diceNumber[0]),
       );
-    } else if (numOfDices == 2) {
+    } else if (widget.isRollingUser == 2) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: screenWidth * 0.3,
-              height: screenHeight * 0.15,
-              child: getDice(diceNumber[0]),
+              width: widget.screenHeight * 0.3,
+              height: widget.screenHeight * 0.15,
+              child: getDice(widget.diceNumber[0]),
             ),
             const SizedBox(
               height: 20,
             ),
             SizedBox(
-              width: screenWidth * 0.3,
-              height: screenHeight * 0.15,
-              child: getDice(diceNumber[1]),
+              width: widget.screenWidth * 0.3,
+              height: widget.screenHeight * 0.15,
+              child: getDice(widget.diceNumber[1]),
             ),
           ],
         ),
       );
-    } else if (numOfDices == 3) {
+    } else if (widget.numOfDices == 3) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               SizedBox(
-                width: screenWidth * 0.3,
-                height: screenHeight * 0.15,
-                child: getDice(diceNumber[0]),
+                width: widget.screenWidth * 0.3,
+                height: widget.screenHeight * 0.15,
+                child: getDice(widget.diceNumber[0]),
               ),
               const SizedBox(width: 20),
               SizedBox(
-                width: screenWidth * 0.3,
-                height: screenHeight * 0.15,
-                child: getDice(diceNumber[1]),
+                width: widget.screenWidth * 0.3,
+                height: widget.screenHeight * 0.15,
+                child: getDice(widget.diceNumber[1]),
               ),
             ]),
             const SizedBox(height: 20),
             SizedBox(
-              width: screenWidth * 0.3,
-              height: screenHeight * 0.15,
-              child: getDice(diceNumber[2]),
+              width: widget.screenWidth * 0.3,
+              height: widget.screenHeight * 0.15,
+              child: getDice(widget.diceNumber[2]),
             ),
           ],
         ),
@@ -87,13 +83,11 @@ class DiceWidget extends StatelessWidget {
   }
 
   Widget getDice(int diceNum) {
-    // double diceSize = screenWidth;
-
-    return Image.asset(
-      isWhite
-          ? 'assets/images/dice-$diceNum-white.png'
-          : 'assets/images/dice-$diceNum-dark.png',
-      fit: BoxFit.fill,
+    print("isUserTurn: ${widget.isRollingUser}");
+    return SvgPicture.asset(
+      widget.isRollingUser
+          ? 'assets/images/Dice$diceNum-roll.svg'
+          : 'assets/images/Dice$diceNum.svg',
     );
   }
 }

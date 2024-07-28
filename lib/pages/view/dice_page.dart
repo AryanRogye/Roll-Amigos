@@ -6,9 +6,9 @@ import 'package:dice_pt2/models/user_display_game.dart';
 import 'package:dice_pt2/pages/view/rolling_order.dart';
 import 'package:dice_pt2/pages/view/screen_navigation.dart';
 import 'package:dice_pt2/themes/const_themes.dart';
+import 'package:dice_pt2/widgets/dice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:dice_pt2/widgets/dice.dart';
 import 'dart:math';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:dice_pt2/ads/ad_state.dart';
@@ -280,14 +280,14 @@ class DicePageScreen extends State<DicePage> {
   drawAppBar() {
     final Brightness brightness = MediaQuery.of(context).platformBrightness;
     return AppBar(
-      toolbarHeight: 100,
+      toolbarHeight: 130,
       backgroundColor: Colors.transparent,
       flexibleSpace: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 29),
-          child: Text("Pin: ${widget.pinNumber} Users: $users",
+          child: Text("Pin: ${widget.pinNumber}\nUsers: $users",
               style: constThemes.getWorkSansFont(
-                  Colors.white, 30, FontWeight.bold)),
+                  Colors.white, 25, FontWeight.bold)),
         ),
       ),
       // title: Text("${widget.roomName}\nPin: ${widget.pinNumber}\nUsers: $users",
@@ -307,13 +307,18 @@ class DicePageScreen extends State<DicePage> {
   //_______________________________________________________________
   //FUNCTION TO DRAW THE DICE
   //_______________________________________________________________
-  drawDice() {
+  Future<Widget> drawDice() async {
+    var roomDoc = await _db.collection('rooms').doc(widget.roomName).get();
+    rollingOrder = List<String>.from(roomDoc.get("rollingOrder"));
+    int currentIndex = roomDoc.get("RollingIndex");
+    var isUserTurn = rollingOrder[currentIndex] == user!.email;
+
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
     return Center(
-      child: DiceWidget(
+      child: Dice(
         diceNumber: diceNumber,
-        isWhite: true,
+        isRollingUser: isUserTurn,
         screenWidth: screenWidth,
         screenHeight: screenHeight,
         numOfDices: numOfDices,
@@ -442,7 +447,16 @@ class DicePageScreen extends State<DicePage> {
               //need to draw the dice
               Expanded(
                 child: Center(
-                  child: drawDice(),
+                  child: FutureBuilder(
+                    future: drawDice(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return snapshot.data as Widget;
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
+                    },
+                  ),
                 ),
               )
             ],
@@ -470,8 +484,7 @@ class DicePageScreen extends State<DicePage> {
     //TODO
     //NEED TO IMPLEMENT A WAY FOR THE USER TO SEE THE PEOPLE IN THE ROOM
     return showModalBottomSheet(
-      backgroundColor:
-          isWhite ? const Color.fromARGB(255, 48, 48, 48) : Colors.white,
+      backgroundColor: const Color.fromARGB(255, 48, 48, 48),
       context: context,
       builder: (BuildContext context) {
         return SingleChildScrollView(
@@ -779,17 +792,13 @@ class DicePageScreen extends State<DicePage> {
         child: Container(
           height: 70,
           width: double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: LeaveRoomButtonColor,
-          ),
+          decoration: constThemes.myBoxDecoration,
           alignment: Alignment.center,
-          child: const Text("Leave Room",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              )),
+          child: Text(
+            "Leave Room",
+            style:
+                constThemes.getWorkSansFont(Colors.white, 20, FontWeight.bold),
+          ),
         ),
       ),
     );
@@ -811,19 +820,15 @@ class DicePageScreen extends State<DicePage> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: LeaveRoomButtonColor,
-          ),
+          decoration: constThemes.myBoxDecoration,
           height: 70,
           width: double.infinity,
           alignment: Alignment.center,
-          child: const Text("Rolling Order",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              )),
+          child: Text(
+            "Rolling Order",
+            style:
+                constThemes.getWorkSansFont(Colors.white, 20, FontWeight.bold),
+          ),
         ),
       ),
     );
