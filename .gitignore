@@ -14,3 +14,8 @@
 /devtools_options.yaml
 /dice_pt2.iml
 /pubspec.lock
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+ios/Flutter/firebase_app_id_file.json
+android/app/firebase_app_id_file.json
+lib/ads/ad_state.dart

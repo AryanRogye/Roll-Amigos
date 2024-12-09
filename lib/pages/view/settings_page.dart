@@ -189,14 +189,12 @@ class _SettingsPagecState extends State<SettingsPage> {
           actions: [
             TextButton(
               onPressed: () {
-                print("No");
                 Navigator.pop(context);
               },
               child: const Text("No"),
             ),
             TextButton(
               onPressed: () {
-                print("Yes");
                 Navigator.pop(context);
                 FirebaseFunctions.signOut(prefs: widget.prefs);
               },

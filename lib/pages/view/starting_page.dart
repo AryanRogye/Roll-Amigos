@@ -70,7 +70,7 @@ class _StartingPageState extends State<StartingPage> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: const Text('Dice With Friends',
+        title: const Text('Roll Amigos',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 17,
@@ -363,7 +363,6 @@ class _StartingPageState extends State<StartingPage> {
       color: Colors.black,
       onPressed: () async {
         await addToFirebaseCloud();
-        print("Room Creation Done: $roomCreationDone");
         if (roomCreationDone) {
           //need to get the password of the room
           String pinNumber = "";
@@ -394,7 +393,6 @@ class _StartingPageState extends State<StartingPage> {
   drawJoinRoomButton() {
     return MaterialButton(
       onPressed: () async {
-        print("Join Room Button Pressed");
         await checkPassWithRoom();
       },
       color: Colors.black,
@@ -427,7 +425,6 @@ class _StartingPageState extends State<StartingPage> {
       );
     }
     if (msg == "password is correct") {
-      print("Password is correct: $roomPassword");
       var roomName =
           await FirebaseFunctions.addUserToFirebaseCloud(roomPassword);
       //this means that the password is correct

@@ -1,7 +1,7 @@
 name: dice_pt2
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: '>=3.4.1 <4.0.0'
@@ -35,7 +35,7 @@ dev_dependencies:
 flutter_icons:
   android: true
   ios: true
-  image_path: "assets/icon/dice-6-white.png"
+  image_path: "assets/icon/logo.png"
   
 
 flutter:

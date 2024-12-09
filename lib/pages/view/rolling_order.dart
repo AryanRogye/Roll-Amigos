@@ -32,7 +32,6 @@ class _RollOrderPageState extends State<RollOrderPage> {
     //get the emails from the database
     var emailList =
         await FirebaseFunctions.getRollingOrder(roomName: widget.roomName);
-    print("emails are: $emailList");
     setState(() {
       emails = emailList;
       isLoading = false;
