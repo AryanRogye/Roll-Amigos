@@ -19,3 +19,4 @@ ios/Runner/GoogleService-Info.plist
 ios/Flutter/firebase_app_id_file.json
 android/app/firebase_app_id_file.json
 lib/ads/ad_state.dart
+lib/build/
